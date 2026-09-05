@@ -16,7 +16,7 @@ Tests use installed Google Chrome through Playwright's chrome channel. Install C
 
 ## Architecture and design
 
-Static, semantic HTML with small TypeScript islands. Geist and Geist Mono fonts are self-hosted. Lucide supplies UI icons. No analytics scripts, auth, API keys, or backend required.
+Static, semantic HTML with small TypeScript islands. Geist and Geist Mono fonts are self-hosted. Lucide supplies UI icons. Vercel Analytics is injected in `src/main.ts`; no auth, API keys, or backend required.
 
 `index.html` owns content and metadata; `src/style.css` owns adaptive tokens and layouts; `src/main.ts` owns theme preference and the illustrative provider demo. The demo never connects to real accounts.
 

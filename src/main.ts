@@ -1,6 +1,8 @@
 import './style.css';
 import { createIcons, ArrowUpRight, ArrowDown, ArrowDownRight, Download, Sun, Moon, Command, Wifi, BatteryFull, Star, ScanLine, Orbit, Terminal, Plus } from 'lucide';
+import { inject } from '@vercel/analytics';
 import { mountAsciiCrown } from './ascii-crown';
+inject();
 createIcons({ icons: { ArrowUpRight, ArrowDown, ArrowDownRight, Download, Sun, Moon, Command, Wifi, BatteryFull, Star, ScanLine, Orbit, Terminal, Plus } });
 const themeButton = document.querySelector<HTMLButtonElement>('#theme-toggle')!;
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');
