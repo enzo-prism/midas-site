@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://midas-by-prism.vercel.app/sitemap.xml

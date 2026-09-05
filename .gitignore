@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.vercel/
+.env*
+work/
+test-results/
+playwright-report/
+.vercel
