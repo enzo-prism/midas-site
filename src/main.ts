@@ -39,6 +39,7 @@ document.querySelectorAll<HTMLButtonElement>('[data-provider]').forEach(button =
     for (const id of ['preview-logo', 'orbit-logo']) {
       const logo = document.querySelector<HTMLImageElement>(`#${id}`)!;
       logo.src = `/providers/${key}.svg`;
+      logo.classList.toggle('preserve-color', key === 'meta');
       if (id === 'orbit-logo') logo.alt = `${provider.name} favorite provider`;
     }
     const ring = document.querySelector<HTMLElement>('#orbit-ring')!;

@@ -20,6 +20,8 @@ Static, semantic HTML with small TypeScript islands. Geist and Geist Mono fonts 
 
 `index.html` owns content and metadata; `src/style.css` owns adaptive tokens and layouts; `src/main.ts` owns theme preference and the illustrative provider demo. The demo never connects to real accounts.
 
+Brand assets are minimal: `public/favicon.svg` and `public/og.png` share one gold crown mark. Provider logos render monochrome (dark ink in light mode, inverted in dark mode); only Meta keeps its brand color via `preserve-color`.
+
 `src/ascii-crown.ts` draws an original rotating crown using a local point cloud and ASCII glyphs. Inspired by Prism's canvas animation technique, it caps playback at 18fps (12fps mobile), pauses offscreen/hidden, and becomes static with Reduce Motion. ResizeObserver and a 2x pixel-ratio cap keep it responsive. Theme preference is the only site-owned browser storage.
 
 ## Product content
