@@ -87,6 +87,19 @@ test('decorative canvas animates normally and remains static with reduced motion
   await expect(page.locator('#ascii-crown')).toHaveAttribute('aria-hidden', 'true');
 });
 
+test('updates timeline tracks releases newest-first with source links', async ({ page }) => {
+  await page.getByRole('navigation').getByRole('link', { name: 'Updates' }).click();
+  await expect(page.locator('#updates-title')).toBeVisible();
+  const entries = page.locator('.update-list > li');
+  expect(await entries.count()).toBeGreaterThanOrEqual(4);
+  await expect(entries.first()).toContainText('0.33.4');
+  await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.33.4-midas.1');
+  for (const entry of await entries.all()) {
+    await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
+  }
+});
+
 test('download CTAs point to the actual Midas arm64 app ZIP', async ({ page }) => {
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
