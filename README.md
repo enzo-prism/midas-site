@@ -22,6 +22,8 @@ Static, semantic HTML with small TypeScript islands. Geist and Geist Mono fonts 
 
 Brand assets are minimal: `public/favicon.svg` and `public/og.png` share one gold crown mark. Provider logos render monochrome (dark ink in light mode, inverted in dark mode); only Meta keeps its brand color via `preserve-color`.
 
+The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are layered SVG: a four-stop gold gradient with a gem highlight, plus CSS-only motion (entrance rise, gentle float, breathing glow, periodic sheen sweep, single star twinkle, hover lift). See `docs/crown.md` for tokens and timings. Motion is transform/filter/opacity only and collapses to a static gold mark under Reduce Motion.
+
 `src/ascii-crown.ts` draws an original rotating crown using a local point cloud and ASCII glyphs. Inspired by Prism's canvas animation technique, it caps playback at 18fps (12fps mobile), pauses offscreen/hidden, and becomes static with Reduce Motion. ResizeObserver and a 2x pixel-ratio cap keep it responsive. Theme preference is the only site-owned browser storage.
 
 ## Product content
