@@ -39,3 +39,7 @@ Vercel project: `midas-by-prism`, team `enzo-design-prisms-projects`. Link expli
 ## Credits
 
 Midas is a fork of CodexBar by Peter Steinberger and contributors. Provider marks belong to their respective owners and do not imply endorsement. See THIRD_PARTY_NOTICES.md.
+
+## Google Search Console
+
+URL-prefix property: `https://midas-by-prism.vercel.app/`. Ownership uses the Google verification meta tag in `index.html`; preserve it through redesigns. Sitemap: `https://midas-by-prism.vercel.app/sitemap.xml`. A new custom domain needs its own property and updated canonical/sitemap URLs.
