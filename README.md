@@ -28,7 +28,7 @@ The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are 
 
 ## Product content
 
-Current download: Midas 0.35.1, Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, download version caption, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+Current download: Midas 0.35.2, Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, download version caption, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
 
 “Token spend (API rates)” is an estimate, not a bill. Codex quota is weekly; Cursor uses reported quota; Meta has no quota. Preserve those distinctions. All demo values are illustrative.
 

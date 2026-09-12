@@ -92,11 +92,11 @@ test('updates timeline tracks releases newest-first with source links', async ({
   await expect(page.locator('#updates-title')).toBeVisible();
   const entries = page.locator('.update-list > li');
   expect(await entries.count()).toBeGreaterThanOrEqual(4);
-  await expect(entries.first()).toContainText('0.35.1');
-  await expect(entries.nth(1)).toContainText('0.35.0');
-  await expect(entries.first()).toContainText('Choose This month, Last 30 days, or a recorded month');
+  await expect(entries.first()).toContainText('0.35.2');
+  await expect(entries.nth(1)).toContainText('0.35.1');
+  await expect(entries.first()).toContainText('See available banked resets for each displayed Codex account');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.35.1-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.35.2-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -106,7 +106,7 @@ test('download CTAs point to the actual Midas arm64 app ZIP', async ({ page }) =
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.35.1-midas.1/Midas-0.35.1-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.35.2-midas.1/Midas-0.35.2-macos-arm64.zip');
   }
   await expect(page.locator('body')).toContainText('Apple Silicon');
 });
