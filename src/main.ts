@@ -22,9 +22,9 @@ themeButton.addEventListener('click', () => {
 });
 systemTheme.addEventListener('change', event => { if (savedTheme !== 'light' && savedTheme !== 'dark') setTheme(event.matches ? 'dark' : 'light'); });
 const providers = {
-  codex: { name: 'Codex', spend: '$186.40', label: 'This week', quota: '72% left', percent: 72 },
+  codex: { name: 'Codex', spend: '$186.40', label: 'Weekly remaining', quota: '72% left', percent: 72 },
   cursor: { name: 'Cursor', spend: '$42.80', label: 'Reported quota', quota: '64% left', percent: 64 },
-  meta: { name: 'Meta', spend: '$19.40', label: 'Remaining capacity', quota: 'Not reported', percent: null },
+  meta: { name: 'Meta', spend: '$19.40', label: 'Remaining quota', quota: 'Not reported', percent: null },
 };
 const quotaValue = document.querySelector<HTMLElement>('#quota-value')!;
 quotaValue.setAttribute('aria-live', 'polite');

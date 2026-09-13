@@ -94,7 +94,7 @@ test('updates timeline tracks releases newest-first with source links', async ({
   expect(await entries.count()).toBeGreaterThanOrEqual(4);
   await expect(entries.first()).toContainText('0.35.2');
   await expect(entries.nth(1)).toContainText('0.35.1');
-  await expect(entries.first()).toContainText('See available banked resets for each displayed Codex account');
+  await expect(entries.first()).toContainText('on-demand rate-limit resets each connected Codex account has');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
   await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.35.2-midas.1');
   for (const entry of await entries.all()) {
