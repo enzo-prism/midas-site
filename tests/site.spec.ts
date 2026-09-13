@@ -40,6 +40,63 @@ test('favorite changes preserve totals and distinguish unknown Meta capacity', a
   await expect(page.locator('.demo-disclaimer')).toContainText(/illustrative/i);
 });
 
+test('period chip cycles illustrative totals and keeps provider spend consistent', async ({ page }) => {
+  await expect(page.locator('#period-name')).toHaveText('This month');
+  await expect(page.locator('.preview-total')).toHaveText('$248.60');
+  await page.getByRole('button', { name: 'Change the demo spend period' }).click();
+  await expect(page.locator('#period-name')).toHaveText('Last 30 days');
+  await expect(page.locator('#period-range')).toHaveText('Aug 14 – Sep 13');
+  await expect(page.locator('.preview-total')).toHaveText('$412.15');
+  await expect(page.locator('#orbit-spend')).toHaveText('$412');
+  await expect(page.locator('#provider-spend')).toHaveText('$309.75');
+  await page.getByRole('button', { name: 'Cursor', exact: true }).click();
+  await expect(page.locator('#provider-spend')).toHaveText('$71.20');
+  await expect(page.locator('.preview-total')).toHaveText('$412.15');
+  await page.getByRole('button', { name: 'Change the demo spend period' }).click();
+  await page.getByRole('button', { name: 'Change the demo spend period' }).click();
+  await expect(page.locator('#period-name')).toHaveText('This month');
+  await expect(page.locator('#provider-spend')).toHaveText('$42.80');
+});
+
+test('per-account Codex details only appear for the Codex favorite', async ({ page }) => {
+  const accounts = page.locator('#preview-accounts');
+  await expect(accounts).toBeVisible();
+  await expect(accounts).toContainText('Banked resets');
+  await expect(accounts).toContainText('Unavailable');
+  await page.getByRole('button', { name: 'Meta', exact: true }).click();
+  await expect(accounts).toBeHidden();
+  await page.getByRole('button', { name: 'Codex', exact: true }).click();
+  await expect(accounts).toBeVisible();
+});
+
+test('provider marquee renders every bundled logo and a static fallback under reduced motion', async ({ page }) => {
+  const logos = page.locator('.provider-set:not([aria-hidden]) img');
+  expect(await logos.count()).toBe(15);
+  for (const logo of await logos.all()) {
+    expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  }
+  await expect(page.locator('.provider-set[aria-hidden="true"]')).toHaveCount(1);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.provider-set[aria-hidden="true"]')).toBeHidden();
+  await expect(page.locator('.provider-track')).toHaveCSS('animation-name', 'none');
+});
+
+test('navigation covers every section and reveals content on scroll', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const links = page.locator('.header nav a[href^="#"]');
+  expect(await links.count()).toBe(6);
+  for (const href of await links.evaluateAll(anchors => anchors.map(a => a.getAttribute('href')!))) {
+    await expect(page.locator(href)).toHaveCount(1);
+  }
+  await expect(page.locator('#details [data-reveal]').first()).toHaveCSS('opacity', '0');
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Updates' }).click();
+  await expect.poll(async () => page.locator('#details [data-reveal]:not(.is-visible)').count()).toBe(0);
+  await page.locator('#download').scrollIntoViewIfNeeded();
+  await expect.poll(async () => page.locator('[data-reveal]:not(.is-visible)').count()).toBe(0);
+  await expect(page.locator('#updates-title')).toBeVisible();
+  await expect(page.locator('.header nav a[aria-current="true"]')).toHaveCount(1);
+});
+
 test('FAQ supports keyboard expansion and closing', async ({ page }) => {
   const summary = page.locator('summary').first();
   const details = page.locator('details').first();
