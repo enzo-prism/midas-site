@@ -1,6 +1,6 @@
 # Third-party notices
 
-Provider SVGs in public/providers were obtained from the MIT-licensed enzo-prism/midas fork of steipete/CodexBar. Provider names and marks remain trademarks of their owners. No endorsement is implied.
+Provider SVGs in public/providers were obtained from the MIT-licensed enzo-prism/midas fork of steipete/CodexBar (`docs/logos` and `Sources/CodexBar/Resources`), which in turn bundles them from public catalogs such as SVGL. Marks included: Codex, Cursor, Meta, Claude, Gemini, GitHub Copilot, OpenRouter, Grok, Perplexity, Mistral, DeepSeek, Ollama, Kimi, MiniMax, and Warp. They are rendered monochrome on this site (Meta keeps its brand color). Provider names and marks remain trademarks of their owners. No endorsement is implied, and no logo has been redrawn.
 
 Lucide icons: ISC license, Lucide contributors. Geist fonts: SIL Open Font License, Vercel. Dependency distributions retain their license files.
 
