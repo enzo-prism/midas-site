@@ -1,6 +1,8 @@
 # Third-party notices
 
-Provider SVGs in public/providers were obtained from the MIT-licensed enzo-prism/midas fork of steipete/CodexBar (`docs/logos` and `Sources/CodexBar/Resources`), which in turn bundles them from public catalogs such as SVGL. Marks included: Codex, Cursor, Meta, Claude, Gemini, GitHub Copilot, OpenRouter, Grok, Perplexity, Mistral, DeepSeek, Ollama, Kimi, MiniMax, and Warp. They are rendered monochrome on this site (Meta keeps its brand color). Provider names and marks remain trademarks of their owners. No endorsement is implied, and no logo has been redrawn.
+Provider SVGs in public/providers were obtained from the MIT-licensed enzo-prism/midas fork of steipete/CodexBar (`docs/logos` and `Sources/CodexBar/Resources`), which in turn bundles them from public catalogs such as SVGL. Marks included: Codex, Cursor, Meta, Claude, Gemini, GitHub Copilot, OpenRouter, Grok, Perplexity, Mistral, DeepSeek, Ollama, Kimi, MiniMax, Warp, Amp, Augment, Windsurf, OpenCode, and z.ai. They are rendered monochrome on this site (Meta keeps its brand color). Provider names and marks remain trademarks of their owners. No endorsement is implied, and no logo has been redrawn. Technical-only edits: `augment.svg` gained the `viewBox` its 512x512 source omitted, and `opencode.svg` uses `currentColor` with `fill-opacity` so its two-tone geometry survives the monochrome filter. Amp, Windsurf, and z.ai use the icon-only variants bundled in the app's `Sources/CodexBar/Resources`.
+
+`public/og.png` is composed from the site's own crown mark, wordmark, typography, and illustrative demo values; it contains no third-party artwork other than the Codex mark inside the Orbit ring.
 
 Lucide icons: ISC license, Lucide contributors. Geist fonts: SIL Open Font License, Vercel. Dependency distributions retain their license files.
 

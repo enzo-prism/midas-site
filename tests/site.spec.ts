@@ -71,7 +71,7 @@ test('per-account Codex details only appear for the Codex favorite', async ({ pa
 
 test('provider marquee renders every bundled logo and a static fallback under reduced motion', async ({ page }) => {
   const logos = page.locator('.provider-set:not([aria-hidden]) img');
-  expect(await logos.count()).toBe(15);
+  expect(await logos.count()).toBe(20);
   for (const logo of await logos.all()) {
     expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   }
@@ -157,6 +157,22 @@ test('updates timeline tracks releases newest-first with source links', async ({
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
+});
+
+test('social preview image is 1200x630 and referenced by Open Graph and Twitter tags', async ({ page }) => {
+  const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content');
+  expect(ogImage).toMatch(/\/og\.png(\?v=\d+)?$/);
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', ogImage!);
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /illustrative/i);
+  const size = await page.evaluate(() => new Promise<{ width: number; height: number }>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    image.onerror = () => reject(new Error('og.png failed to load'));
+    image.src = '/og.png';
+  }));
+  expect(size).toEqual({ width: 1200, height: 630 });
 });
 
 test('download CTAs point to the actual Midas arm64 app ZIP', async ({ page }) => {
