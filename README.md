@@ -9,7 +9,7 @@ Public site: https://midas-by-prism.vercel.app
 Node 22 and pnpm. Run `pnpm install`, then `pnpm dev`.
 
 - `pnpm build`: TypeScript checks and Vite production build.
-- `pnpm test`: thirteen browser regression checks. Start `pnpm dev --port 4173` first.
+- `pnpm test`: fourteen browser regression checks. Start `pnpm dev --port 4173` first.
 - `BASE_URL=https://midas-by-prism.vercel.app pnpm test`: public-site smoke checks.
 
 Tests use installed Google Chrome through Playwright's chrome channel. Install Chrome if unavailable.
@@ -24,7 +24,7 @@ Page order: hero, provider logo marquee, interactive overview demo (`#overview`)
 
 Motion: scroll reveal, the logo marquee, quota-bar fills, and the pulsing release dot are wrapped in `prefers-reduced-motion: no-preference` or disabled by the global reduced-motion rule. Under Reduce Motion the marquee becomes a static wrapped logo grid and every `[data-reveal]` element is visible without transitions.
 
-Brand assets are minimal: `public/favicon.svg` and `public/og.png` share one gold crown mark. Provider logos render monochrome (dark ink in light mode, inverted in dark mode); only Meta keeps its brand color via `preserve-color`. Logo files come from the Midas app repository; see THIRD_PARTY_NOTICES.md and never redraw a mark.
+Brand assets are minimal: `public/favicon.svg` and `public/og.png` share one gold crown mark. The 1200x630 social image is rendered from an HTML composition (site fonts, dark theme tokens, hero headline and subline, illustrative Orbit and spend-card mockups); regenerate it whenever the hero copy or version changes and bump the `?v=` query on the `og:image` and `twitter:image` URLs so scrapers refetch it. Provider logos render monochrome (dark ink in light mode, inverted in dark mode); only Meta keeps its brand color via `preserve-color`. Logo files come from the Midas app repository; see THIRD_PARTY_NOTICES.md and never redraw a mark.
 
 The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are layered SVG: a four-stop gold gradient with a gem highlight, plus CSS-only motion (entrance rise, gentle float, breathing glow, periodic sheen sweep, single star twinkle, hover lift). See `docs/crown.md` for tokens and timings. Motion is transform/filter/opacity only and collapses to a static gold mark under Reduce Motion.
 
