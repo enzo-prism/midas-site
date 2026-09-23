@@ -71,7 +71,7 @@ test('per-account Codex details only appear for the Codex favorite', async ({ pa
 
 test('provider marquee renders every bundled logo and a static fallback under reduced motion', async ({ page }) => {
   const logos = page.locator('.provider-set:not([aria-hidden]) img');
-  expect(await logos.count()).toBe(20);
+  expect(await logos.count()).toBe(21);
   for (const logo of await logos.all()) {
     expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   }
@@ -182,4 +182,14 @@ test('download CTAs point to the actual Midas arm64 app ZIP', async ({ page }) =
     await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.37.1-midas.1/Midas-0.37.1-macos-arm64.zip');
   }
   await expect(page.locator('body')).toContainText('Apple Silicon');
+});
+
+test('canonical domain and current product claims', async ({ page }) => {
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://midas-ai.dev/');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://midas-ai.dev/');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /^https:\/\/midas-ai\.dev\//);
+  const features = page.locator('#details .feature-list');
+  await expect(features).toContainText('5-hour and weekly limits');
+  await expect(features).toContainText('Billed API spend');
+  await expect(page.locator('body')).not.toContainText('keeps the CodexBar filename');
 });

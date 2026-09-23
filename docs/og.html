@@ -1,0 +1,32 @@
+<!doctype html><html data-theme="dark"><head><meta charset="UTF-8"><link rel="stylesheet" href="/src/style.css">
+<style>
+body{width:1200px;height:630px;overflow:hidden;background:var(--bg);color:var(--fg);position:relative;margin:0}
+.top{position:absolute;left:72px;right:72px;top:58px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;font-size:30px;font-weight:600;letter-spacing:-.6px;padding-bottom:18px}
+.tag,.foot{font-family:'Geist Mono Variable',monospace;font-size:12px;letter-spacing:1.6px;color:var(--muted);text-transform:uppercase}
+.tag{padding-bottom:18px}.tag b{display:inline-block;width:9px;height:9px;background:var(--accent);margin-right:10px;vertical-align:1px}
+h1{position:absolute;left:72px;top:160px;margin:0;font-size:92px;line-height:.98;font-weight:500;letter-spacing:-4px}
+h1 span{color:var(--accent)}
+.sub{position:absolute;left:72px;top:372px;width:660px;margin:0;font-size:22px;line-height:1.55;color:var(--muted)}
+.foot{position:absolute;left:72px;right:72px;bottom:44px;border-top:1px solid var(--line);padding-top:28px;display:flex;gap:18px}
+.card{position:absolute;right:72px;width:330px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.menubar{top:190px;height:56px;display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:0 20px;font-size:19px;font-weight:600}
+.ring{width:24px;height:24px;border-radius:50%;border:3px solid var(--accent);display:grid;place-items:center}.ring img{width:13px;filter:invert(1)}
+.clock{font-weight:400;color:var(--muted)}
+.cap{position:absolute;right:72px;top:262px;font-family:'Geist Mono Variable',monospace;font-size:10px;letter-spacing:1.6px;color:var(--muted)}
+.spend{top:300px;padding:18px 20px}
+.spend small{font-size:12px;color:var(--muted)}.spend .total{font-size:34px;font-weight:600;letter-spacing:-1px;margin:4px 0 12px}
+.row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:10px}.row b{color:var(--fg);font-weight:600}
+.bar{height:6px;border-radius:3px;background:var(--line);margin-top:6px}.bar i{display:block;height:100%;border-radius:3px;background:var(--accent)}
+</style></head><body>
+<div class="top"><div class="brand"><span class="pixel-crown" aria-hidden="true"><svg viewBox="0 0 25 22" width="25" height="22" focusable="false" aria-hidden="true"><defs><linearGradient id="crown-gold-h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6D5"/><stop offset=".38" stop-color="#F1D67A"/><stop offset=".72" stop-color="#C9A227"/><stop offset="1" stop-color="#8A6D1B"/></linearGradient></defs><path d="M0 0h3v5.7h7V0h5v5.7h7V0h3v16.5H0z M0 19.4h25V22H0z" fill="url(#crown-gold-h)"/><circle cx="12.5" cy="12" r="1.6" fill="#FFF6D8"/></svg></span><span>midas</span></div><div class="tag"><b></b>Free &amp; open source &nbsp;/&nbsp; Mac menu bar</div></div>
+<h1>Know what your<br>AI is <span>worth.</span></h1>
+<p class="sub">Estimated AI spend at API rates, remaining quota, and reset times for Codex, Cursor, Claude, and Meta. In your Mac’s menu bar.</p>
+<div class="card menubar"><span>$248</span><span class="ring"><img src="/providers/codex.svg" alt=""></span><span class="clock">9:41</span></div>
+<div class="cap">ORBIT MENU BAR · ILLUSTRATIVE VALUES</div>
+<div class="card spend"><small>Estimated inference spend (API rates)</small><div class="total">$248.60</div>
+<div class="row"><span>Codex · weekly remaining</span><b>72% left</b></div><div class="bar"><i style="width:72%"></i></div>
+<div class="row"><span>Claude · 5-hour limit</span><b>64% left</b></div><div class="bar"><i style="width:64%"></i></div></div>
+<div class="foot"><span>Apple Silicon</span><span>/</span><span style="text-transform:none">macOS 14+</span><span>/</span><span>Signed &amp; notarized</span><span>/</span><span>midas-ai.dev</span></div>
+<script type="module">import '/src/style.css';</script>
+</body></html>

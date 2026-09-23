@@ -2,7 +2,7 @@
 
 Marketing site for [Midas](https://github.com/enzo-prism/midas), a free and open-source macOS menu-bar app that shows estimated AI inference spend at API rates, remaining quota, reset times, and banked resets for Codex, Cursor, Meta, and the other CodexBar providers.
 
-Public site: https://midas-by-prism.vercel.app
+Public site: https://midas-ai.dev (the `midas-by-prism.vercel.app` host permanently redirects there via `vercel.json`)
 
 ## Develop
 
@@ -10,7 +10,7 @@ Node 22 and pnpm. Run `pnpm install`, then `pnpm dev`.
 
 - `pnpm build`: TypeScript checks and Vite production build.
 - `pnpm test`: fourteen browser regression checks. Start `pnpm dev --port 4173` first.
-- `BASE_URL=https://midas-by-prism.vercel.app pnpm test`: public-site smoke checks.
+- `BASE_URL=https://midas-ai.dev pnpm test`: public-site smoke checks.
 
 Tests use installed Google Chrome through Playwright's chrome channel. Install Chrome if unavailable.
 
@@ -24,7 +24,7 @@ Page order: hero, provider logo marquee, interactive overview demo (`#overview`)
 
 Motion: scroll reveal, the logo marquee, quota-bar fills, and the pulsing release dot are wrapped in `prefers-reduced-motion: no-preference` or disabled by the global reduced-motion rule. Under Reduce Motion the marquee becomes a static wrapped logo grid and every `[data-reveal]` element is visible without transitions.
 
-Brand assets are minimal: `public/favicon.svg` and `public/og.png` share one gold crown mark. The 1200x630 social image is rendered from an HTML composition (site fonts, dark theme tokens, hero headline and subline, illustrative Orbit and spend-card mockups); regenerate it whenever the hero copy or version changes and bump the `?v=` query on the `og:image` and `twitter:image` URLs so scrapers refetch it. Provider logos render monochrome (dark ink in light mode, inverted in dark mode); only Meta keeps its brand color via `preserve-color`. Logo files come from the Midas app repository; see THIRD_PARTY_NOTICES.md and never redraw a mark.
+Brand assets are minimal: `public/favicon.svg` and `public/og.png` share one gold crown mark. The 1200x630 social image is rendered from an HTML composition (site fonts, dark theme tokens, hero headline and subline, illustrative Orbit and spend-card mockups); the composition is `docs/og.html` (render with `pnpm exec vite --port 4174` then `node docs/render-og.mjs`). It deliberately shows no version number, so it only needs regenerating when the hero copy or supported-provider line changes; then bump the `?v=` query on the `og:image` and `twitter:image` URLs so scrapers refetch it. Provider logos render monochrome (dark ink in light mode, inverted in dark mode); only Meta keeps its brand color via `preserve-color`. Logo files come from the Midas app repository; see THIRD_PARTY_NOTICES.md and never redraw a mark.
 
 The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are layered SVG: a four-stop gold gradient with a gem highlight, plus CSS-only motion (entrance rise, gentle float, breathing glow, periodic sheen sweep, single star twinkle, hover lift). See `docs/crown.md` for tokens and timings. Motion is transform/filter/opacity only and collapses to a static gold mark under Reduce Motion.
 
@@ -50,4 +50,4 @@ Midas is a fork of CodexBar by Peter Steinberger and contributors. Provider mark
 
 ## Google Search Console
 
-URL-prefix property: `https://midas-by-prism.vercel.app/`. Ownership uses the Google verification meta tag in `index.html`; preserve it through redesigns. Sitemap: `https://midas-by-prism.vercel.app/sitemap.xml`. A new custom domain needs its own property and updated canonical/sitemap URLs.
+Canonical, Open Graph, robots, and sitemap URLs use `https://midas-ai.dev/`. The original URL-prefix property is `https://midas-by-prism.vercel.app/` (verified by the Google meta tag in `index.html`; preserve it through redesigns); `midas-ai.dev` needs its own Search Console property with sitemap `https://midas-ai.dev/sitemap.xml`.
