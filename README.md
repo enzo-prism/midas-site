@@ -34,7 +34,7 @@ The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are 
 
 Audience: heavy AI users who want to get the most out of their subscriptions and understand their usage. Copy is plain and concrete. Every feature claim must exist in the current Midas release; check the app repository's `CHANGELOG.md`, `README.md`, and `docs/MIDAS_SETUP.md` before adding one. No invented metrics, customer quotes, or faces.
 
-Current download: Midas 0.38.0, Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+Current download: Midas 0.39.0, Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
 
 Estimated spend is priced at public API rates and is never a bill. Codex quota is weekly; Cursor uses its reported quota; Meta has no quota. Banked resets are separate from weekly resets. Preserve those distinctions. All demo values are illustrative and provider spends sum to each period's total.
 
