@@ -149,11 +149,11 @@ test('updates timeline tracks releases newest-first with source links', async ({
   await expect(page.locator('#updates-title')).toBeVisible();
   const entries = page.locator('.update-list > li');
   expect(await entries.count()).toBeGreaterThanOrEqual(4);
-  await expect(entries.first()).toContainText('0.41.0');
-  await expect(entries.nth(1)).toContainText('0.40.0');
-  await expect(entries.first()).toContainText('Grok Bot stays put, with its own mark');
+  await expect(entries.first()).toContainText('0.41.1');
+  await expect(entries.nth(1)).toContainText('0.41.0');
+  await expect(entries.first()).toContainText('One ring for the whole week');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.41.0-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.41.1-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -179,7 +179,7 @@ test('download CTAs point to the actual Midas arm64 app ZIP', async ({ page }) =
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.41.0-midas.1/Midas-0.41.0-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.41.1-midas.1/Midas-0.41.1-macos-arm64.zip');
   }
   await expect(page.locator('body')).toContainText('Apple Silicon');
 });
@@ -195,4 +195,13 @@ test('canonical domain and current product claims', async ({ page }) => {
   await expect(features).toContainText('Fable-only weekly limit');
   await expect(features).toContainText('Cursor Models, Other Models, and Grok Bot');
   await expect(page.locator('body')).not.toContainText('keeps the CodexBar filename');
+});
+
+
+test('Orbit describes the provider-wide weekly allowance and Cursor month', async ({ page }) => {
+  const orbit = page.locator('.mode-card').filter({ has: page.getByRole('heading', { name: 'Orbit DEFAULT' }) });
+  await expect(orbit).toContainText('one outer ring');
+  await expect(orbit).toContainText('weekly allowance remaining');
+  await expect(orbit).toContainText('Cursor’s monthly allowance');
+  await expect(orbit).toContainText('Model and session limits stay out of the ring');
 });
