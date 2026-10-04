@@ -9,7 +9,7 @@ Public site: https://midas-ai.dev (the `midas-by-prism.vercel.app` host permanen
 Node 22 and pnpm. Run `pnpm install`, then `pnpm dev`.
 
 - `pnpm build`: TypeScript checks and Vite production build.
-- `pnpm test`: fourteen browser regression checks. Start `pnpm dev --port 4173` first.
+- `pnpm test`: sixteen browser regression checks. Start `pnpm dev --port 4173` first.
 - `BASE_URL=https://midas-ai.dev pnpm test`: public-site smoke checks.
 
 Tests use installed Google Chrome through Playwright's chrome channel. Install Chrome if unavailable.
@@ -34,7 +34,9 @@ The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are 
 
 Audience: heavy AI users who want to get the most out of their subscriptions and understand their usage. Copy is plain and concrete. Every feature claim must exist in the current Midas release; check the app repository's `CHANGELOG.md`, `README.md`, and `docs/MIDAS_SETUP.md` before adding one. No invented metrics, customer quotes, or faces.
 
-Current download: Midas 0.41.1, Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+Current download: Midas 0.41.2 (build 116), Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+
+Claude supports separate personal and work sign-ins with verified emails and optional nicknames. Each saved account refreshes independently and shows its own 5-hour and all-model weekly limits, reset times, and errors. Model-specific weekly limits remain in account details. Claude Code spend is a provider-wide estimate from local activity; it is not attributed to individual saved accounts. The sign-in flow leaves the current Claude Code login unchanged.
 
 Estimated spend is priced at public API rates and is never a bill. Orbit shows one provider-wide weekly allowance, or Cursor’s monthly allowance; model-specific and session quotas do not drive its ring. Meta has no quota. Banked resets are separate from weekly resets. Preserve those distinctions. All demo values are illustrative and provider spends sum to each period's total.
 

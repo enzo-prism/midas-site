@@ -106,6 +106,11 @@ test('FAQ supports keyboard expansion and closing', async ({ page }) => {
   await expect(details.locator('p')).toBeVisible();
   await page.keyboard.press('Space');
   await expect(details).not.toHaveAttribute('open');
+  const providers = page.locator('#faq details').filter({ has: page.getByText('What about Claude, Gemini, Copilot, and the rest?', { exact: true }) });
+  await expect(providers).toContainText('Guided setup covers Codex, Claude, Cursor, and Meta');
+  await expect(providers).toContainText('separate sign-ins and verified emails');
+  await expect(providers).toContainText('5-hour and all-model weekly limits in the overview');
+  await expect(providers).toContainText('model-specific weekly limits, including Fable when reported, stay in account details');
 });
 
 for (const width of [1440, 390, 320]) {
@@ -149,11 +154,13 @@ test('updates timeline tracks releases newest-first with source links', async ({
   await expect(page.locator('#updates-title')).toBeVisible();
   const entries = page.locator('.update-list > li');
   expect(await entries.count()).toBeGreaterThanOrEqual(4);
-  await expect(entries.first()).toContainText('0.41.1');
-  await expect(entries.nth(1)).toContainText('0.41.0');
-  await expect(entries.first()).toContainText('One ring for the whole week');
+  await expect(entries.first()).toContainText('0.41.2');
+  await expect(entries.nth(1)).toContainText('0.41.1');
+  await expect(entries.first()).toContainText('Your Claude accounts, side by side');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.41.1-midas.1');
+  await expect(entries.first()).toContainText('OCT 4, 2026');
+  await expect(page.locator('.latest-pill')).toHaveCount(1);
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.41.2-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -179,7 +186,7 @@ test('download CTAs point to the actual Midas arm64 app ZIP', async ({ page }) =
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.41.1-midas.1/Midas-0.41.1-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.41.2-midas.1/Midas-0.41.2-macos-arm64.zip');
   }
   await expect(page.locator('body')).toContainText('Apple Silicon');
 });
@@ -192,7 +199,10 @@ test('canonical domain and current product claims', async ({ page }) => {
   await expect(features).toContainText('5-hour and weekly limits');
   await expect(features).toContainText('Billed API spend');
   await expect(features).toContainText('Claude Code usage at Anthropic API rates');
-  await expect(features).toContainText('Fable-only weekly limit');
+  await expect(features).toContainText('Fable-only weekly limit stays in account details');
+  await expect(features).toContainText('Sign in to personal and work Claude accounts separately');
+  await expect(features).toContainText('Claude Code spend remains a provider-wide estimate');
+  await expect(page.locator('#setup')).toContainText('Codex and Claude support several separate sign-ins');
   await expect(features).toContainText('Cursor Models, Other Models, and Grok Bot');
   await expect(page.locator('body')).not.toContainText('keeps the CodexBar filename');
 });
