@@ -20,7 +20,7 @@ Static, semantic HTML with small TypeScript islands. Geist and Geist Mono fonts 
 
 `index.html` owns content and metadata; `src/style.css` owns adaptive tokens and layouts; `src/main.ts` owns theme preference, the illustrative demo (favorite provider and spend period), scroll-reveal, and active-section nav highlighting. The demo never connects to real accounts.
 
-Page order: hero, provider logo marquee, interactive overview demo (`#overview`), six-feature grid (`#details`), menu-bar display modes (`#menubar`), three-step setup (`#setup`), estimate rules (`#trust`), open source, FAQ (`#faq`), release timeline (`#updates`), download (`#download`), footer. The header is sticky and highlights the section in view.
+Page order: hero, provider logo marquee, interactive overview demo (`#overview`), feature list (`#details`), menu-bar display modes (`#menubar`), three-step setup (`#setup`), estimate rules (`#trust`), open source, FAQ (`#faq`), release timeline (`#updates`), download (`#download`), footer. The header is sticky and highlights the section in view.
 
 Motion: scroll reveal, the logo marquee, quota-bar fills, and the pulsing release dot are wrapped in `prefers-reduced-motion: no-preference` or disabled by the global reduced-motion rule. Under Reduce Motion the marquee becomes a static wrapped logo grid and every `[data-reveal]` element is visible without transitions.
 
@@ -34,7 +34,9 @@ The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are 
 
 Audience: heavy AI users who want to get the most out of their subscriptions and understand their usage. Copy is plain and concrete. Every feature claim must exist in the current Midas release; check the app repository's `CHANGELOG.md`, `README.md`, and `docs/MIDAS_SETUP.md` before adding one. No invented metrics, customer quotes, or faces.
 
-Current download: Midas 0.41.2 (build 116), Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+Current download: Midas 0.42.0 (build 117), Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+
+Spend history includes per-provider monthly cost and token charts across 6 or 12 calendar months, with hover details and accessible records. Current-month comparisons use the same elapsed days in the previous month only when matching records are available. Missing history stays unavailable, and explicit zero stays zero. Supported sources can load up to 365 days; Codex cloud currently supplies 30 days and Mistral only its current month. Chart costs preserve the source’s estimate or billed label. The interactive site demo remains illustrative and does not include a monthly chart.
 
 Claude supports separate personal and work sign-ins with verified emails and optional nicknames. Each saved account refreshes independently and shows its own 5-hour and all-model weekly limits, reset times, and errors. Model-specific weekly limits remain in account details. Claude Code spend is a provider-wide estimate from local activity; it is not attributed to individual saved accounts. The sign-in flow leaves the current Claude Code login unchanged.
 
