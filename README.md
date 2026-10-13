@@ -9,7 +9,7 @@ Public site: https://midas-ai.dev (the `midas-by-prism.vercel.app` host permanen
 Node 22 and pnpm. Run `pnpm install`, then `pnpm dev`.
 
 - `pnpm build`: TypeScript checks and Vite production build.
-- `pnpm test`: sixteen browser regression checks. Start `pnpm dev --port 4173` first.
+- `pnpm test`: seventeen browser regression checks. Start `pnpm dev --port 4173` first.
 - `BASE_URL=https://midas-ai.dev pnpm test`: public-site smoke checks.
 
 Tests use installed Google Chrome through Playwright's chrome channel. Install Chrome if unavailable.
@@ -34,7 +34,9 @@ The header, preview, and footer crowns (`span.pixel-crown` in `index.html`) are 
 
 Audience: heavy AI users who want to get the most out of their subscriptions and understand their usage. Copy is plain and concrete. Every feature claim must exist in the current Midas release; check the app repository's `CHANGELOG.md`, `README.md`, and `docs/MIDAS_SETUP.md` before adding one. No invented metrics, customer quotes, or faces.
 
-Current download: Midas 0.42.0 (build 117), Apple Silicon, macOS 14+. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Confirm the linked release is signed and published. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+Current download: Midas 0.43.0 (build 118), tag `v0.43.0-midas.1`, Apple Silicon, macOS 14+. The public archive passed checksum, Developer ID signature, notarization ticket, Gatekeeper, and Sparkle signature verification before this site was published. This does not establish installation or iCloud delivery on another Mac. App ZIP links are explicit immutable release assets, not dSYM archives. To update the app version, update the release badge, two download URLs, the download button label, the "ships in" line in `#details`, this document, and download assertions in tests together. Prepend a matching entry (version, date, chip, highlights, release-tag link) to the top of the `#updates` timeline and move the LATEST pill to it.
+
+Optional usage sync combines recorded Codex, Claude Code, and Muse Code events through the same private shared folder selected in Settings → Sync on each Mac. Macs using the same Apple Account can use a dedicated iCloud Drive folder; no Midas account or credential backend is required. Each verified Cursor account/day is counted once, and shared history uses UTC days. Combined scope appears in monthly charts, spend history, menu-bar totals, and widgets; it does not add Codex cloud totals to local events. Sign-ins, credentials, conversation text, and quota limits stay local. The readable folder contains numeric usage, costs, public model names, opaque identities, and device labels, so only use a private folder. iCloud delivery can be delayed; a local save does not prove another Mac received it. Meta AI / the Muse consumer app has no verified numeric source and is currently unavailable. See the app’s `docs/MIDAS_USAGE_SYNC.md` for the source and privacy contract.
 
 Spend history includes per-provider monthly cost and token charts across 6 or 12 calendar months, with hover details and accessible records. Current-month comparisons use the same elapsed days in the previous month only when matching records are available. Missing history stays unavailable, and explicit zero stays zero. Supported sources can load up to 365 days; Codex cloud currently supplies 30 days and Mistral only its current month. Chart costs preserve the source’s estimate or billed label. The interactive site demo remains illustrative and does not include a monthly chart.
 

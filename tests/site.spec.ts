@@ -154,15 +154,16 @@ test('updates timeline tracks releases newest-first with source links', async ({
   await expect(page.locator('#updates-title')).toBeVisible();
   const entries = page.locator('.update-list > li');
   expect(await entries.count()).toBeGreaterThanOrEqual(4);
-  await expect(entries.first()).toContainText('0.42.0');
-  await expect(entries.nth(1)).toContainText('0.41.2');
-  await expect(entries.nth(2)).toContainText('0.41.1');
-  await expect(entries.first()).toContainText('See how your months compare');
-  await expect(entries.nth(1)).toContainText('Your Claude accounts, side by side');
+  await expect(entries.first()).toContainText('0.43.0');
+  await expect(entries.nth(1)).toContainText('0.42.0');
+  await expect(entries.nth(2)).toContainText('0.41.2');
+  await expect(entries.first()).toContainText('Your Macs, one recorded history');
+  await expect(entries.nth(1)).toContainText('See how your months compare');
+  await expect(entries.nth(2)).toContainText('Your Claude accounts, side by side');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
   await expect(entries.first()).toContainText('OCT 12, 2026');
   await expect(page.locator('.latest-pill')).toHaveCount(1);
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.42.0-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.43.0-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -184,11 +185,11 @@ test('social preview image is 1200x630 and referenced by Open Graph and Twitter 
   expect(size).toEqual({ width: 1200, height: 630 });
 });
 
-test('download CTAs point to the actual Midas arm64 app ZIP', async ({ page }) => {
+test('download CTAs use versioned Midas arm64 app ZIP URLs', async ({ page }) => {
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.42.0-midas.1/Midas-0.42.0-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.43.0-midas.1/Midas-0.43.0-macos-arm64.zip');
   }
   await expect(page.locator('body')).toContainText('Apple Silicon');
 });
@@ -204,9 +205,9 @@ test('canonical domain and current product claims', async ({ page }) => {
   await expect(features).toContainText('same elapsed days in the previous month');
   await expect(features).toContainText('Missing history stays unavailable');
   await expect(features).toContainText('Codex cloud currently supplies 30 days and Mistral only its current month');
-  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.42.0');
-  await expect(page.locator('#details')).toContainText('Everything here ships in Midas 0.42.0');
-  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.42.0');
+  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.43.0');
+  await expect(page.locator('#details')).toContainText('Everything here ships in Midas 0.43.0');
+  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.43.0');
   await expect(features).toContainText('Billed API spend');
   await expect(features).toContainText('Claude Code usage at Anthropic API rates');
   await expect(features).toContainText('Fable-only weekly limit stays in account details');
@@ -215,6 +216,39 @@ test('canonical domain and current product claims', async ({ page }) => {
   await expect(page.locator('#setup')).toContainText('Codex and Claude support several separate sign-ins');
   await expect(features).toContainText('Cursor Models, Other Models, and Grok Bot');
   await expect(page.locator('body')).not.toContainText('keeps the CodexBar filename');
+});
+
+test('optional cross-Mac sync explains setup, accounting, delivery, and source limits', async ({ page }) => {
+  const feature = page.locator('#usage-sync');
+  await expect(feature.locator('.feature-icon svg')).toHaveCount(1);
+  await expect(feature).toContainText('same private iCloud Drive folder');
+  await expect(feature).toContainText('recorded Codex, Claude Code, and Muse Code usage');
+  await expect(feature).toContainText('counts each Cursor account once');
+  await expect(feature).toContainText('No Midas account needed');
+  await expect(feature).toContainText('OPT-IN / UTC DAYS');
+
+  const sync = page.locator('#faq details').filter({ hasText: 'Can I see the same combined usage on my Mac mini and MacBook?' });
+  await sync.locator('summary').click();
+  await expect(sync.locator('p')).toBeVisible();
+  await expect(sync).toContainText('same Apple Account');
+  await expect(sync).toContainText('No Midas account is required');
+  await expect(sync).toContainText('same Cursor account is counted once');
+  await expect(sync).toContainText('UTC days');
+  await expect(sync).toContainText('saving on one Mac does not confirm the other has received it');
+  await expect(sync).toContainText('Provider sign-ins and quota limits remain local');
+
+  const consumer = page.locator('#faq details').filter({ hasText: 'Can Midas track Meta AI or the Muse app?' });
+  await consumer.locator('summary').click();
+  await expect(consumer.locator('p')).toBeVisible();
+  await expect(consumer).toContainText('currently unavailable as numeric usage sources');
+  await expect(consumer).toContainText('Midas can read and sync Muse Code token logs');
+
+  const privacy = page.locator('#faq details').filter({ hasText: 'What leaves my Mac?' });
+  await privacy.locator('summary').click();
+  await expect(privacy.locator('p')).toBeVisible();
+  await expect(privacy).toContainText('opt-in Sync shares numeric usage history');
+  await expect(privacy).toContainText('Prompts, conversation text, raw emails, and credentials stay local');
+  await expect(privacy).toContainText('Anyone with access to that folder can read its usage data');
 });
 
 
