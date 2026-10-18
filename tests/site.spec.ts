@@ -153,26 +153,30 @@ test('updates timeline tracks releases newest-first with source links', async ({
   await page.getByRole('navigation').getByRole('link', { name: 'Updates' }).click();
   await expect(page.locator('#updates-title')).toBeVisible();
   const entries = page.locator('.update-list > li');
-  expect(await entries.count()).toBeGreaterThanOrEqual(5);
-  await expect(entries.first()).toContainText('0.48.1');
-  await expect(entries.nth(1)).toContainText('0.48.0');
-  await expect(entries.nth(2)).toContainText('0.47.1');
-  await expect(entries.nth(3)).toContainText('0.47.0');
-  await expect(entries.nth(4)).toContainText('0.46.2');
-  await expect(entries.first()).toContainText('A cleaner overview, with less noise');
-  await expect(entries.first()).toContainText('Estimate details keeps the full source coverage');
-  await expect(entries.first()).toContainText('compact summary');
-  await expect(entries.first()).toContainText('Missing data stays unavailable');
-  await expect(entries.nth(1)).toContainText('A compact, native Mac interface');
-  await expect(entries.nth(1)).toContainText('Liquid Glass navigation capsule');
-  await expect(entries.nth(2)).toContainText('Lighter shared history and background sync');
-  await expect(entries.nth(2)).toContainText('Unchanged Codex cache refreshes skip disk rewrites');
-  await expect(entries.nth(3)).toContainText('DGX Spark joins your shared usage');
-  await expect(entries.nth(4)).toContainText('Much lighter memory');
+  expect(await entries.count()).toBeGreaterThanOrEqual(6);
+  await expect(entries.first()).toContainText('0.48.2');
+  await expect(entries.nth(1)).toContainText('0.48.1');
+  await expect(entries.nth(2)).toContainText('0.48.0');
+  await expect(entries.nth(3)).toContainText('0.47.1');
+  await expect(entries.nth(4)).toContainText('0.47.0');
+  await expect(entries.nth(5)).toContainText('0.46.2');
+  await expect(entries.first().getByRole('heading', { name: 'AI Spend', exact: true })).toBeVisible();
+  await expect(entries.first()).toContainText('estimated value at API rates');
+  await expect(entries.first()).toContainText('This is a label change');
+  await expect(entries.nth(1)).toContainText('A cleaner overview, with less noise');
+  await expect(entries.nth(1)).toContainText('Estimate details keeps the full source coverage');
+  await expect(entries.nth(1)).toContainText('compact summary');
+  await expect(entries.nth(1)).toContainText('Missing data stays unavailable');
+  await expect(entries.nth(2)).toContainText('A compact, native Mac interface');
+  await expect(entries.nth(2)).toContainText('Liquid Glass navigation capsule');
+  await expect(entries.nth(3)).toContainText('Lighter shared history and background sync');
+  await expect(entries.nth(3)).toContainText('Unchanged Codex cache refreshes skip disk rewrites');
+  await expect(entries.nth(4)).toContainText('DGX Spark joins your shared usage');
+  await expect(entries.nth(5)).toContainText('Much lighter memory');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
-  await expect(entries.first()).toContainText('OCT 17, 2026');
+  await expect(entries.first()).toContainText('OCT 18, 2026');
   await expect(page.locator('.latest-pill')).toHaveCount(1);
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.48.1-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.48.2-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -198,7 +202,7 @@ test('download CTAs use versioned Midas arm64 app ZIP URLs', async ({ page }) =>
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.48.1-midas.1/Midas-0.48.1-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.48.2-midas.1/Midas-0.48.2-macos-arm64.zip');
   }
   await expect(page.locator('body')).toContainText('Apple Silicon');
 });
@@ -215,9 +219,9 @@ test('canonical domain and current product claims', async ({ page }) => {
   await expect(features).toContainText('same elapsed days in the previous month');
   await expect(features).toContainText('Missing history stays unavailable');
   await expect(features).toContainText('Codex cloud currently supplies 30 days and Mistral only its current month');
-  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.48.1');
-  await expect(page.locator('#details')).toContainText('Everything here ships in Midas 0.48.1');
-  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.48.1');
+  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.48.2');
+  await expect(page.locator('#details')).toContainText('Everything here ships in Midas 0.48.2');
+  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.48.2');
   await expect(features).toContainText('Billed API spend');
   await expect(features).toContainText('Claude Code usage at Anthropic API rates');
   await expect(features).toContainText('Fable-only weekly limit stays in account details');
