@@ -2,7 +2,7 @@ import './style.css';
 import {
   createIcons, ArrowUpRight, ArrowDown, ArrowDownRight, Download, Sun, Moon, Command, Wifi, BatteryFull, Star, Plus,
   Calendar, ChevronDown, User, Ticket, Coins, Users, Cloud, ShieldCheck, EyeOff, Layers, Gauge, Info, Check, X,
-  FolderOpen, Sparkles,
+  FolderOpen, Sparkles, ChartColumn,
 } from 'lucide';
 import { inject } from '@vercel/analytics';
 import { mountAsciiCrown } from './ascii-crown';
@@ -10,7 +10,7 @@ inject();
 createIcons({ icons: {
   ArrowUpRight, ArrowDown, ArrowDownRight, Download, Sun, Moon, Command, Wifi, BatteryFull, Star, Plus,
   Calendar, ChevronDown, User, Ticket, Coins, Users, Cloud, ShieldCheck, EyeOff, Layers, Gauge, Info, Check, X,
-  FolderOpen, Sparkles,
+  FolderOpen, Sparkles, ChartColumn,
 } });
 
 const themeButton = document.querySelector<HTMLButtonElement>('#theme-toggle')!;

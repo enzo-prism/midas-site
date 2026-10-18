@@ -201,6 +201,7 @@ test('canonical domain and current product claims', async ({ page }) => {
   const features = page.locator('#details .feature-list');
   await expect(features).toContainText('5-hour and weekly limits');
   await expect(features).toContainText('Compare your spend, month by month');
+  await expect(page.locator('i[data-lucide]')).toHaveCount(0);
   await expect(features).toContainText('cost or tokens across 6 or 12 calendar months');
   await expect(features).toContainText('same elapsed days in the previous month');
   await expect(features).toContainText('Missing history stays unavailable');
