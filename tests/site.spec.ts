@@ -154,16 +154,16 @@ test('updates timeline tracks releases newest-first with source links', async ({
   await expect(page.locator('#updates-title')).toBeVisible();
   const entries = page.locator('.update-list > li');
   expect(await entries.count()).toBeGreaterThanOrEqual(4);
-  await expect(entries.first()).toContainText('0.46.2');
-  await expect(entries.nth(1)).toContainText('0.46.1');
-  await expect(entries.nth(2)).toContainText('0.46.0');
-  await expect(entries.first()).toContainText('Much lighter memory');
-  await expect(entries.nth(1)).toContainText('Sync stays connected');
-  await expect(entries.nth(2)).toContainText('Meta shows its real plan usage');
+  await expect(entries.first()).toContainText('0.47.0');
+  await expect(entries.nth(1)).toContainText('0.46.2');
+  await expect(entries.nth(2)).toContainText('0.46.1');
+  await expect(entries.first()).toContainText('DGX Spark joins your shared usage');
+  await expect(entries.nth(1)).toContainText('Much lighter memory');
+  await expect(entries.nth(2)).toContainText('Sync stays connected');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
-  await expect(entries.first()).toContainText('OCT 15, 2026');
+  await expect(entries.first()).toContainText('OCT 17, 2026');
   await expect(page.locator('.latest-pill')).toHaveCount(1);
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.46.2-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.47.0-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -189,7 +189,7 @@ test('download CTAs use versioned Midas arm64 app ZIP URLs', async ({ page }) =>
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.46.2-midas.1/Midas-0.46.2-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.47.0-midas.1/Midas-0.47.0-macos-arm64.zip');
   }
   await expect(page.locator('body')).toContainText('Apple Silicon');
 });
@@ -205,9 +205,9 @@ test('canonical domain and current product claims', async ({ page }) => {
   await expect(features).toContainText('same elapsed days in the previous month');
   await expect(features).toContainText('Missing history stays unavailable');
   await expect(features).toContainText('Codex cloud currently supplies 30 days and Mistral only its current month');
-  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.46.2');
-  await expect(page.locator('#details')).toContainText('Everything here ships in Midas 0.46.2');
-  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.46.2');
+  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.47.0');
+  await expect(page.locator('#details')).toContainText('Everything here ships in Midas 0.47.0');
+  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.47.0');
   await expect(features).toContainText('Billed API spend');
   await expect(features).toContainText('Claude Code usage at Anthropic API rates');
   await expect(features).toContainText('Fable-only weekly limit stays in account details');
@@ -221,7 +221,9 @@ test('canonical domain and current product claims', async ({ page }) => {
 test('optional cross-Mac sync explains setup, accounting, delivery, and source limits', async ({ page }) => {
   const feature = page.locator('#usage-sync');
   await expect(feature.locator('.feature-icon svg')).toHaveCount(1);
+  await expect(feature).toContainText('private Tailscale hub');
   await expect(feature).toContainText('same private iCloud Drive folder');
+  await expect(feature).toContainText('Linux, including DGX Spark');
   await expect(feature).toContainText('recorded Codex, Claude Code, and Muse Code usage');
   await expect(feature).toContainText('counts each Cursor account once');
   await expect(feature).toContainText('No Midas account needed');
@@ -234,6 +236,8 @@ test('optional cross-Mac sync explains setup, accounting, delivery, and source l
   await expect(sync).toContainText('No Midas account is required');
   await expect(sync).toContainText('same Cursor account is counted once');
   await expect(sync).toContainText('UTC days');
+  await expect(sync).toContainText('Devices save locally while offline and retry later');
+  await expect(sync).toContainText('Keep the hub awake and reachable');
   await expect(sync).toContainText('saving on one Mac does not confirm the other has received it');
   await expect(sync).toContainText('Provider sign-ins and quota limits remain local');
 
@@ -258,4 +262,31 @@ test('Orbit describes the provider-wide weekly allowance and Cursor month', asyn
   await expect(orbit).toContainText('weekly allowance remaining');
   await expect(orbit).toContainText('Cursor’s monthly allowance');
   await expect(orbit).toContainText('Model and session limits stay out of the ring');
+});
+
+
+test('DGX Spark names its local source, model rate basis, and incomplete coverage', async ({ page }) => {
+  const spark = page.locator('#dgx-spark');
+  await spark.scrollIntoViewIfNeeded();
+  await expect(spark).toContainText('DGX Spark. Local tokens, cloud value.');
+  await expect(spark).toContainText('last 30 days');
+  await expect(spark).toContainText('Cached input is part of input, counted once');
+  await expect(spark).toContainText('older or unknown usage stays unpriced');
+  for (const theme of ['light', 'dark']) {
+    if (theme === 'dark') await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+    const logo = spark.locator(`.nvidia-logo-${theme}`);
+    await expect(logo).toBeVisible();
+    expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+    await expect(logo).toHaveCSS('filter', 'none');
+    await expect(spark.locator(`.nvidia-logo-${theme === 'light' ? 'dark' : 'light'}`)).toBeHidden();
+  }
+  const answer = page.locator('#faq details').filter({ hasText: 'How is DGX Spark’s local inference valued?' });
+  await answer.locator('summary').click();
+  await expect(answer).toContainText('newly collected vLLM metrics');
+  await expect(answer).toContainText('NVIDIA Qwen3.8-Flash-Next NVFP4');
+  await expect(answer.locator('a')).toHaveAttribute('href', 'https://lyceum.technology/models/qwen/qwen3.8-flash-next/');
+  await expect(answer).toContainText('$0.20 per million uncached input tokens, $0.05 cached input, and $0.50 output');
+  await expect(answer).toContainText('not a bill or a claim of actual savings');
+  await expect(answer).toContainText('coverage as partial');
+  await expect(answer).toContainText('no cloud subscription quota');
 });
