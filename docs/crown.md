@@ -1,6 +1,6 @@
 # Crown brand mark
 
-The header, app-preview, and footer crowns are `span.pixel-crown` elements in
+The header, signed-update card, and footer crowns are `span.pixel-crown` elements in
 `index.html`, each containing an inline SVG (gold gradient + gem dot) with
 CSS-only motion in `src/style.css`. No JavaScript drives the crown.
 
@@ -8,14 +8,14 @@ CSS-only motion in `src/style.css`. No JavaScript drives the crown.
 
 The SVG path reuses the original pixel-crown silhouette on a `0 0 25 22`
 viewBox (three teeth + base bar). The wrapping span keeps the original box so
-layouts never shift: 25x22 everywhere, 16x14 inside `.preview-brand` via the
-existing `.preview-brand .pixel-crown` rule. Each inline SVG uses its own
-gradient id (`crown-gold-h`, `crown-gold-p`, `crown-gold-f`) because IDs must
-be unique per document.
+layouts never shift: 25x22 in the header and update card, 20x18 in the footer
+via `.footer .pixel-crown`. Each inline SVG uses its own gradient id
+(`crown-gold-h`, `crown-gold-u`, `crown-gold-f`) because IDs must be unique per
+document.
 
 ## Color
 
-Four-stop diagonal gold, identical in light and dark themes:
+Four-stop diagonal gold (the site is dark only):
 
 | Stop | Hex     |
 |------|---------|

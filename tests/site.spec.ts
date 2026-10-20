@@ -10,63 +10,59 @@ test.beforeEach(async ({ page }) => {
 });
 test.afterEach(async ({ page }) => { expect(errors.get(page)).toEqual([]); });
 
-test('theme choice persists after reload in both directions', async ({ page }) => {
-  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.getByRole('button', { name: 'Switch to light mode' }).click();
-  await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+const money = (text: string | null) => Number(text!.replace(/[^0-9.]/g, ''));
+
+test('the site is dark only, even when the system prefers light', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute('content', 'dark');
+  await expect(page.locator('#theme-toggle')).toHaveCount(0);
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(7, 7, 10)');
+  await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark');
 });
 
-test('favorite changes preserve totals and distinguish unknown Meta capacity', async ({ page }) => {
-  const total = await page.locator('.preview-total').textContent();
-  const orbitTotal = await page.locator('#orbit-spend').textContent();
-  for (const [provider, quota, spend] of [
-    ['Cursor', '64% left', '$42.80'], ['Meta', 'Not reported', '$19.40'], ['Codex', '72% left', '$186.40'],
-  ]) {
-    await page.getByRole('button', { name: provider, exact: true }).click();
-    await expect(page.locator('#preview-name')).toHaveText(provider);
-    await expect(page.locator('#quota-value')).toHaveText(quota);
-    await expect(page.locator('#provider-spend')).toHaveText(spend);
-    await expect(page.locator('.preview-total')).toHaveText(total!);
-    await expect(page.locator('#orbit-spend')).toHaveText(orbitTotal!);
-    await expect(page.locator('[data-provider][aria-pressed="true"]')).toHaveCount(1);
-    await expect(page.getByRole('button', { name: provider, exact: true })).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('#orbit-logo')).toHaveAttribute('alt', `${provider} favorite provider`);
-    await expect(page.locator('#orbit-ring')).toHaveCSS('border-top-style', provider === 'Meta' ? 'dashed' : 'solid');
+test('hero panel provider spends always sum to the illustrative total in both periods', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload();
+  const panel = page.locator('#panel');
+  await expect(panel).toHaveClass(/is-open/);
+  for (const [period, total, orbit] of [['This month', '$391.35', '$391'], ['Last 30 days', '$633.45', '$633']]) {
+    if (period !== 'This month') await page.getByRole('button', { name: 'Change the demo spend period' }).click();
+    await expect(page.locator('#period-name')).toHaveText(period);
+    await expect(page.locator('#panel-total')).toHaveText(total);
+    await expect(page.locator('#orbit-spend')).toHaveText(orbit);
+    const parts = await page.locator('[data-spend]').allTextContents();
+    expect(parts).toHaveLength(4);
+    expect(parts.reduce((sum, part) => sum + money(part), 0)).toBeCloseTo(money(total), 2);
   }
   await expect(page.locator('.demo-disclaimer')).toContainText(/illustrative/i);
+  // Meta reports no limit, so the demo never invents a percentage for it.
+  await expect(page.locator('[data-row="meta"] .pbar')).toHaveCount(0);
+  await expect(page.locator('[data-row="meta"]')).toContainText('no reported limit');
 });
 
-test('period chip cycles illustrative totals and keeps provider spend consistent', async ({ page }) => {
-  await expect(page.locator('#period-name')).toHaveText('This month');
-  await expect(page.locator('.preview-total')).toHaveText('$248.60');
-  await page.getByRole('button', { name: 'Change the demo spend period' }).click();
-  await expect(page.locator('#period-name')).toHaveText('Last 30 days');
-  await expect(page.locator('#period-range')).toHaveText('Aug 14 – Sep 13');
-  await expect(page.locator('.preview-total')).toHaveText('$412.15');
-  await expect(page.locator('#orbit-spend')).toHaveText('$412');
-  await expect(page.locator('#provider-spend')).toHaveText('$309.75');
-  await page.getByRole('button', { name: 'Cursor', exact: true }).click();
-  await expect(page.locator('#provider-spend')).toHaveText('$71.20');
-  await expect(page.locator('.preview-total')).toHaveText('$412.15');
-  await page.getByRole('button', { name: 'Change the demo spend period' }).click();
-  await page.getByRole('button', { name: 'Change the demo spend period' }).click();
-  await expect(page.locator('#period-name')).toHaveText('This month');
-  await expect(page.locator('#provider-spend')).toHaveText('$42.80');
+test('hero plays like a screen recording, and a visitor can take over', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.reload();
+  const stage = page.locator('#stage');
+  await expect(stage).toHaveClass(/is-playing/);
+  await expect(page.locator('#panel')).toHaveClass(/is-open/, { timeout: 6000 });
+  await expect(page.locator('#period-name')).toHaveText('Last 30 days', { timeout: 10000 });
+  await page.getByRole('button', { name: 'Toggle the illustrative Midas panel' }).click();
+  await expect(stage).not.toHaveClass(/is-playing/);
+  const open = await page.locator('#panel').evaluate(element => element.classList.contains('is-open'));
+  await page.getByRole('button', { name: 'Toggle the illustrative Midas panel' }).click();
+  if (open) await expect(page.locator('#panel')).not.toHaveClass(/is-open/);
+  else await expect(page.locator('#panel')).toHaveClass(/is-open/);
+  await expect(page.locator('#orbit-item')).toHaveAttribute('aria-expanded', String(!open));
 });
 
-test('per-account Codex details only appear for the Codex favorite', async ({ page }) => {
-  const accounts = page.locator('#preview-accounts');
-  await expect(accounts).toBeVisible();
-  await expect(accounts).toContainText('Banked resets');
-  await expect(accounts).toContainText('Unavailable');
-  await page.getByRole('button', { name: 'Meta', exact: true }).click();
-  await expect(accounts).toBeHidden();
-  await page.getByRole('button', { name: 'Codex', exact: true }).click();
-  await expect(accounts).toBeVisible();
+test('reduced motion shows the finished hero frame without a cursor', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload();
+  await expect(page.locator('#stage')).not.toHaveClass(/is-playing/);
+  await expect(page.locator('#stage')).toHaveClass(/is-filled/);
+  await expect(page.locator('#cursor')).toBeHidden();
+  await expect(page.locator('#panel-total')).toHaveText('$391.35');
 });
 
 test('provider marquee renders every bundled logo and a static fallback under reduced motion', async ({ page }) => {
@@ -84,17 +80,71 @@ test('provider marquee renders every bundled logo and a static fallback under re
 test('navigation covers every section and reveals content on scroll', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   const links = page.locator('.header nav a[href^="#"]');
-  expect(await links.count()).toBe(6);
+  expect(await links.count()).toBe(5);
   for (const href of await links.evaluateAll(anchors => anchors.map(a => a.getAttribute('href')!))) {
     await expect(page.locator(href)).toHaveCount(1);
   }
-  await expect(page.locator('#details [data-reveal]').first()).toHaveCSS('opacity', '0');
+  await expect(page.locator('#features [data-reveal]').first()).toHaveCSS('opacity', '0');
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Updates' }).click();
-  await expect.poll(async () => page.locator('#details [data-reveal]:not(.is-visible)').count()).toBe(0);
+  await expect.poll(async () => page.locator('#features [data-reveal]:not(.in-view)').count()).toBe(0);
   await page.locator('#download').scrollIntoViewIfNeeded();
-  await expect.poll(async () => page.locator('[data-reveal]:not(.is-visible)').count()).toBe(0);
-  await expect(page.locator('#updates-title')).toBeVisible();
+  await expect.poll(async () => page.locator('[data-reveal]:not(.in-view)').count()).toBe(0);
   await expect(page.locator('.header nav a[aria-current="true"]')).toHaveCount(1);
+});
+
+test('feature bento keeps its live components honest', async ({ page }) => {
+  const features = page.locator('#features');
+  await features.scrollIntoViewIfNeeded();
+  await expect(features).toContainText('ESTIMATE ≠ YOUR BILL');
+  await expect(features).toContainText('5-hour and weekly limits');
+  await expect(features).toContainText('Cursor Models');
+  await expect(features).toContainText('Grok Bot');
+  await expect(features).toContainText('never averaged');
+  await expect(features).toContainText('Billed stays separate');
+  await expect(features).toContainText('Liquid Glass on macOS 26');
+  await expect(page.locator('i[data-lucide]')).toHaveCount(0);
+  // The share bar's providers add up to the headline total.
+  const legend = await page.locator('.share-legend li').allTextContents();
+  expect(legend.reduce((sum, item) => sum + money(item), 0)).toBeCloseTo(391.35, 2);
+  // Months without records render as unavailable, never as a zero-height bar.
+  await page.locator('#chart').scrollIntoViewIfNeeded();
+  await expect(page.locator('#chart .col')).toHaveCount(12);
+  await expect(page.locator('#chart .col.missing')).toHaveCount(2);
+  const before = await page.locator('#chart .col.now i').first().evaluate(element => element.style.height);
+  await page.getByRole('button', { name: 'Tokens', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Tokens', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => page.locator('#chart .col.now i').first().evaluate(element => element.style.height)).not.toBe(before);
+});
+
+test('DGX Spark names its rate basis and loads the NVIDIA mark unfiltered', async ({ page }) => {
+  const spark = page.locator('#dgx-spark');
+  await spark.scrollIntoViewIfNeeded();
+  await expect(spark).toContainText('DGX Spark. Local tokens, cloud value.');
+  await expect(spark).toContainText('LAST 30 DAYS');
+  await expect(spark).toContainText('API-EQUIVALENT, NOT A BILL');
+  const logo = spark.locator('.nvidia-logo');
+  expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(logo).toHaveCSS('filter', 'none');
+  const answer = page.locator('#faq details').filter({ hasText: 'How is DGX Spark valued?' });
+  await answer.locator('summary').click();
+  await expect(answer.locator('a')).toHaveAttribute('href', 'https://lyceum.technology/models/qwen/qwen3.8-flash-next/');
+  await expect(answer).toContainText('not a bill or a savings claim');
+});
+
+test('menu-bar modes switch by click and keyboard, with privacy masking', async ({ page }) => {
+  await page.locator('#menubar').scrollIntoViewIfNeeded();
+  const view = page.locator('#mode-view');
+  for (const [mode, caption] of [['Ledger', 'Just the number'], ['Focus', 'remaining quota'], ['Constellation', 'A dash when'], ['Orbit', 'weekly allowance']]) {
+    await page.getByRole('tab', { name: new RegExp(`^${mode}`) }).click();
+    await expect(view).toHaveAttribute('data-mode', mode.toLowerCase());
+    await expect(page.locator('#mode-caption')).toContainText(caption);
+    await expect(page.locator('[role="tab"][aria-selected="true"]')).toHaveCount(1);
+  }
+  await page.keyboard.press('ArrowRight');
+  await expect(view).toHaveAttribute('data-mode', 'ledger');
+  await page.getByRole('button', { name: 'Spend privacy' }).click();
+  await expect(view).toHaveClass(/is-private/);
+  await expect(page.locator('.bm-ledger .bm-money')).not.toHaveCSS('filter', 'none');
 });
 
 test('FAQ supports keyboard expansion and closing', async ({ page }) => {
@@ -106,24 +156,19 @@ test('FAQ supports keyboard expansion and closing', async ({ page }) => {
   await expect(details.locator('p')).toBeVisible();
   await page.keyboard.press('Space');
   await expect(details).not.toHaveAttribute('open');
-  const providers = page.locator('#faq details').filter({ has: page.getByText('What about Claude, Gemini, Copilot, and the rest?', { exact: true }) });
-  await expect(providers).toContainText('Guided setup covers Codex, Claude, Cursor, and Meta');
-  await expect(providers).toContainText('separate sign-ins and verified emails');
-  await expect(providers).toContainText('5-hour and all-model weekly limits in the overview');
-  await expect(providers).toContainText('model-specific weekly limits, including Fable when reported, stay in account details');
+  const privacy = page.locator('#faq details').filter({ hasText: 'What leaves my Mac?' });
+  await privacy.locator('summary').click();
+  await expect(privacy).toContainText('Prompts, conversation text, and credentials stay local');
 });
 
 for (const width of [1440, 390, 320]) {
-  test(`no horizontal overflow at ${width}px in either theme`, async ({ page }) => {
+  test(`no horizontal overflow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
-    for (const theme of ['light', 'dark']) {
-      if (theme === 'dark') await page.getByRole('button', { name: 'Switch to dark mode' }).click();
-      const dimensions = await page.evaluate(() => ({
-        content: document.documentElement.scrollWidth, viewport: document.documentElement.clientWidth,
-      }));
-      expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
-      await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    }
+    const dimensions = await page.evaluate(() => ({
+      content: document.documentElement.scrollWidth, viewport: document.documentElement.clientWidth,
+    }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 }
 
@@ -149,45 +194,17 @@ test('decorative canvas animates normally and remains static with reduced motion
   await expect(page.locator('#ascii-crown')).toHaveAttribute('aria-hidden', 'true');
 });
 
-test('updates timeline tracks releases newest-first with source links', async ({ page }) => {
+test('updates list releases newest-first with source links', async ({ page }) => {
   await page.getByRole('navigation').getByRole('link', { name: 'Updates' }).click();
-  await expect(page.locator('#updates-title')).toBeVisible();
   const entries = page.locator('.update-list > li');
-  expect(await entries.count()).toBeGreaterThanOrEqual(6);
+  await expect(entries).toHaveCount(6);
   await expect(entries.first()).toContainText('0.48.4');
   await expect(entries.nth(1)).toContainText('0.48.3');
-  await expect(entries.nth(2)).toContainText('0.48.2');
-  await expect(entries.nth(3)).toContainText('0.48.1');
-  await expect(entries.nth(4)).toContainText('0.48.0');
-  await expect(entries.nth(5)).toContainText('0.47.1');
-  await expect(entries.nth(6)).toContainText('0.47.0');
-  await expect(entries.nth(7)).toContainText('0.46.2');
   await expect(entries.first().getByRole('heading', { name: 'Every Mac’s full history, shared', exact: true })).toBeVisible();
-  await expect(entries.first()).toContainText('shared as daily per-model totals instead of being dropped');
-  await expect(entries.first()).toContainText('Update each synced Mac');
   await expect(entries.first()).toContainText('OCT 20, 2026');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
   await expect(page.locator('.latest-pill')).toHaveCount(1);
   await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.48.4-midas.1');
-  await expect(entries.nth(1).getByRole('heading', { name: 'Keep Codex on one account', exact: true })).toBeVisible();
-  await expect(entries.nth(1)).toContainText('optional local preference');
-  await expect(entries.nth(1)).toContainText('without falling back to another login');
-  await expect(entries.nth(1)).toContainText('exclude combined device history');
-  await expect(entries.nth(1)).toContainText('shared-history contributions');
-  await expect(entries.nth(1)).toContainText('OCT 18, 2026');
-  await expect(entries.nth(2).getByRole('heading', { name: 'AI Spend', exact: true })).toBeVisible();
-  await expect(entries.nth(2)).toContainText('estimated value at API rates');
-  await expect(entries.nth(2)).toContainText('This is a label change');
-  await expect(entries.nth(3)).toContainText('A cleaner overview, with less noise');
-  await expect(entries.nth(3)).toContainText('Estimate details keeps the full source coverage');
-  await expect(entries.nth(3)).toContainText('compact summary');
-  await expect(entries.nth(3)).toContainText('Missing data stays unavailable');
-  await expect(entries.nth(4)).toContainText('A compact, native Mac interface');
-  await expect(entries.nth(4)).toContainText('Liquid Glass navigation capsule');
-  await expect(entries.nth(5)).toContainText('Lighter shared history and background sync');
-  await expect(entries.nth(5)).toContainText('Unchanged Codex cache refreshes skip disk rewrites');
-  await expect(entries.nth(6)).toContainText('DGX Spark joins your shared usage');
-  await expect(entries.nth(7)).toContainText('Much lighter memory');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -215,103 +232,20 @@ test('download CTAs use versioned Midas arm64 app ZIP URLs', async ({ page }) =>
   for (const link of await links.all()) {
     await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.48.4-midas.1/Midas-0.48.4-macos-arm64.zip');
   }
-  await expect(page.locator('body')).toContainText('Apple Silicon');
+  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.48.4');
+  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.48.4');
+  await expect(page.locator('body')).toContainText('APPLE SILICON');
 });
 
-test('canonical domain and current product claims', async ({ page }) => {
+test('canonical domain, Search Console tag, and sync claims', async ({ page }) => {
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://midas-ai.dev/');
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://midas-ai.dev/');
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /^https:\/\/midas-ai\.dev\//);
-  const features = page.locator('#details .feature-list');
-  await expect(features).toContainText('5-hour and weekly limits');
-  await expect(features).toContainText('Compare your spend, month by month');
-  await expect(page.locator('i[data-lucide]')).toHaveCount(0);
-  await expect(features).toContainText('cost or tokens across 6 or 12 calendar months');
-  await expect(features).toContainText('same elapsed days in the previous month');
-  await expect(features).toContainText('Missing history stays unavailable');
-  await expect(features).toContainText('Codex cloud currently supplies 30 days and Mistral only its current month');
-  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.48.4');
-  await expect(page.locator('#details')).toContainText('Everything here ships in Midas 0.48.4');
-  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.48.4');
-  await expect(features).toContainText('Billed API spend');
-  await expect(features).toContainText('Claude Code usage at Anthropic API rates');
-  await expect(features).toContainText('Fable-only weekly limit stays in account details');
-  await expect(features).toContainText('Sign in to personal and work Claude accounts separately');
-  await expect(features).toContainText('Claude Code spend remains a provider-wide estimate');
-  await expect(page.locator('#setup')).toContainText('Codex and Claude support several separate sign-ins');
-  await expect(features).toContainText('Cursor Models, Other Models, and Grok Bot');
+  await expect(page.locator('meta[name="google-site-verification"]')).toHaveCount(1);
+  const sync = page.locator('#sync');
+  await expect(sync).toContainText('Private Tailscale hub or iCloud Drive folder');
+  await expect(sync).toContainText('No Midas account needed');
+  await expect(sync).toContainText('Prompts stay local');
+  await expect(sync).toContainText('DGX Spark');
   await expect(page.locator('body')).not.toContainText('keeps the CodexBar filename');
-});
-
-test('optional cross-Mac sync explains setup, accounting, delivery, and source limits', async ({ page }) => {
-  const feature = page.locator('#usage-sync');
-  await expect(feature.locator('.feature-icon svg')).toHaveCount(1);
-  await expect(feature).toContainText('private Tailscale hub');
-  await expect(feature).toContainText('same private iCloud Drive folder');
-  await expect(feature).toContainText('Linux, including DGX Spark');
-  await expect(feature).toContainText('recorded Codex, Claude Code, and Muse Code usage');
-  await expect(feature).toContainText('counts each Cursor account once');
-  await expect(feature).toContainText('No Midas account needed');
-  await expect(feature).toContainText('OPT-IN / UTC DAYS');
-
-  const sync = page.locator('#faq details').filter({ hasText: 'Can I see the same combined usage on my Mac mini and MacBook?' });
-  await sync.locator('summary').click();
-  await expect(sync.locator('p')).toBeVisible();
-  await expect(sync).toContainText('same Apple Account');
-  await expect(sync).toContainText('No Midas account is required');
-  await expect(sync).toContainText('same Cursor account is counted once');
-  await expect(sync).toContainText('UTC days');
-  await expect(sync).toContainText('Devices save locally while offline and retry later');
-  await expect(sync).toContainText('Keep the hub awake and reachable');
-  await expect(sync).toContainText('saving on one Mac does not confirm the other has received it');
-  await expect(sync).toContainText('Provider sign-ins and quota limits remain local');
-
-  const consumer = page.locator('#faq details').filter({ hasText: 'Can Midas track Meta AI or the Muse app?' });
-  await consumer.locator('summary').click();
-  await expect(consumer.locator('p')).toBeVisible();
-  await expect(consumer).toContainText('currently unavailable as numeric usage sources');
-  await expect(consumer).toContainText('Midas can read and sync Muse Code token logs');
-
-  const privacy = page.locator('#faq details').filter({ hasText: 'What leaves my Mac?' });
-  await privacy.locator('summary').click();
-  await expect(privacy.locator('p')).toBeVisible();
-  await expect(privacy).toContainText('opt-in Sync shares numeric usage history');
-  await expect(privacy).toContainText('Prompts, conversation text, raw emails, and credentials stay local');
-  await expect(privacy).toContainText('Anyone with access to that folder can read its usage data');
-});
-
-
-test('Orbit describes the provider-wide weekly allowance and Cursor month', async ({ page }) => {
-  const orbit = page.locator('.mode-card').filter({ has: page.getByRole('heading', { name: 'Orbit DEFAULT' }) });
-  await expect(orbit).toContainText('one outer ring');
-  await expect(orbit).toContainText('weekly allowance remaining');
-  await expect(orbit).toContainText('Cursor’s monthly allowance');
-  await expect(orbit).toContainText('Model and session limits stay out of the ring');
-});
-
-
-test('DGX Spark names its local source, model rate basis, and incomplete coverage', async ({ page }) => {
-  const spark = page.locator('#dgx-spark');
-  await spark.scrollIntoViewIfNeeded();
-  await expect(spark).toContainText('DGX Spark. Local tokens, cloud value.');
-  await expect(spark).toContainText('last 30 days');
-  await expect(spark).toContainText('Cached input is part of input, counted once');
-  await expect(spark).toContainText('older or unknown usage stays unpriced');
-  for (const theme of ['light', 'dark']) {
-    if (theme === 'dark') await page.getByRole('button', { name: 'Switch to dark mode' }).click();
-    const logo = spark.locator(`.nvidia-logo-${theme}`);
-    await expect(logo).toBeVisible();
-    expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
-    await expect(logo).toHaveCSS('filter', 'none');
-    await expect(spark.locator(`.nvidia-logo-${theme === 'light' ? 'dark' : 'light'}`)).toBeHidden();
-  }
-  const answer = page.locator('#faq details').filter({ hasText: 'How is DGX Spark’s local inference valued?' });
-  await answer.locator('summary').click();
-  await expect(answer).toContainText('newly collected vLLM metrics');
-  await expect(answer).toContainText('NVIDIA Qwen3.8-Flash-Next NVFP4');
-  await expect(answer.locator('a')).toHaveAttribute('href', 'https://lyceum.technology/models/qwen/qwen3.8-flash-next/');
-  await expect(answer).toContainText('$0.20 per million uncached input tokens, $0.05 cached input, and $0.50 output');
-  await expect(answer).toContainText('not a bill or a claim of actual savings');
-  await expect(answer).toContainText('coverage as partial');
-  await expect(answer).toContainText('no cloud subscription quota');
 });
