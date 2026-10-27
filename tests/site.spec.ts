@@ -35,6 +35,8 @@ test('hero panel provider spends always sum to the illustrative total in both pe
     expect(parts.reduce((sum, part) => sum + money(part), 0)).toBeCloseTo(money(total), 2);
   }
   await expect(page.locator('.demo-disclaimer')).toContainText(/illustrative/i);
+  await expect(page.locator('[data-row="codex"] .banked')).toHaveText('0 usable now');
+  await expect(page.locator('[data-row="codex"] .banked')).toHaveAttribute('title', /1 unused credit; 0 apply/);
   // Meta reports no limit, so the demo never invents a percentage for it.
   await expect(page.locator('[data-row="meta"] .pbar')).toHaveCount(0);
   await expect(page.locator('[data-row="meta"]')).toContainText('no reported limit');
@@ -198,13 +200,13 @@ test('updates list releases newest-first with source links', async ({ page }) =>
   await page.getByRole('navigation').getByRole('link', { name: 'Updates' }).click();
   const entries = page.locator('.update-list > li');
   await expect(entries).toHaveCount(6);
-  await expect(entries.first()).toContainText('0.49.2');
-  await expect(entries.nth(1)).toContainText('0.49.1');
-  await expect(entries.first().getByRole('heading', { name: 'Accurate Meta plan limits', exact: true })).toBeVisible();
-  await expect(entries.first()).toContainText('OCT 25, 2026');
+  await expect(entries.first()).toContainText('0.49.3');
+  await expect(entries.nth(1)).toContainText('0.49.2');
+  await expect(entries.first().getByRole('heading', { name: 'Reset credits you can use', exact: true })).toBeVisible();
+  await expect(entries.first()).toContainText('OCT 26, 2026');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
   await expect(page.locator('.latest-pill')).toHaveCount(1);
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.49.2-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.49.3-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -230,10 +232,10 @@ test('download CTAs use versioned Midas arm64 app ZIP URLs', async ({ page }) =>
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.49.2-midas.1/Midas-0.49.2-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.49.3-midas.1/Midas-0.49.3-macos-arm64.zip');
   }
-  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.49.2');
-  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.49.2');
+  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.49.3');
+  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.49.3');
   await expect(page.locator('body')).toContainText('APPLE SILICON');
 });
 
