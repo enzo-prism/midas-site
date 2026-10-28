@@ -160,7 +160,8 @@ test('FAQ supports keyboard expansion and closing', async ({ page }) => {
   await expect(details).not.toHaveAttribute('open');
   const privacy = page.locator('#faq details').filter({ hasText: 'What leaves my Mac?' });
   await privacy.locator('summary').click();
-  await expect(privacy).toContainText('Prompts, conversation text, and credentials stay local');
+  await expect(privacy).toContainText('does not upload your prompts or conversation text');
+  await expect(privacy).toContainText('login credentials are never synced');
 });
 
 for (const width of [1440, 390, 320]) {
@@ -200,13 +201,13 @@ test('updates list releases newest-first with source links', async ({ page }) =>
   await page.getByRole('navigation').getByRole('link', { name: 'Updates' }).click();
   const entries = page.locator('.update-list > li');
   await expect(entries).toHaveCount(6);
-  await expect(entries.first()).toContainText('0.49.3');
-  await expect(entries.nth(1)).toContainText('0.49.2');
-  await expect(entries.first().getByRole('heading', { name: 'Reset credits you can use', exact: true })).toBeVisible();
-  await expect(entries.first()).toContainText('OCT 26, 2026');
+  await expect(entries.first()).toContainText('0.49.4');
+  await expect(entries.nth(1)).toContainText('0.49.3');
+  await expect(entries.first().getByRole('heading', { name: 'Your accounts, your labels', exact: true })).toBeVisible();
+  await expect(entries.first()).toContainText('OCT 27, 2026');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
   await expect(page.locator('.latest-pill')).toHaveCount(1);
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.49.3-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.49.4-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -232,10 +233,10 @@ test('download CTAs use versioned Midas arm64 app ZIP URLs', async ({ page }) =>
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.49.3-midas.1/Midas-0.49.3-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.49.4-midas.1/Midas-0.49.4-macos-arm64.zip');
   }
-  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.49.3');
-  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.49.3');
+  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.49.4');
+  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.49.4');
   await expect(page.locator('body')).toContainText('APPLE SILICON');
 });
 
@@ -250,4 +251,57 @@ test('canonical domain, Search Console tag, and sync claims', async ({ page }) =
   await expect(sync).toContainText('Prompts stay local');
   await expect(sync).toContainText('DGX Spark');
   await expect(page.locator('body')).not.toContainText('keeps the CodexBar filename');
+});
+
+
+test('search metadata describes the app consistently without billing claims', async ({ page }) => {
+  const title = 'Midas — AI Usage Tracker for Mac | Claude, Codex & Cursor';
+  const description = 'Track Claude, Codex, and Cursor usage, quotas, resets, and estimated AI spend in your Mac menu bar. Free, open source, with optional private sync.';
+  await expect(page).toHaveTitle(title);
+  await expect(page.locator('title')).toHaveCount(1);
+  await expect(page.locator('meta[name="description"]')).toHaveCount(1);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description);
+  for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) {
+    await expect(page.locator(selector)).toHaveAttribute('content', title);
+  }
+  for (const selector of ['meta[property="og:description"]', 'meta[name="twitter:description"]']) {
+    await expect(page.locator(selector)).toHaveAttribute('content', description);
+  }
+  await expect(page.locator('h1')).toHaveCount(1);
+  await expect(page.locator('h1')).toContainText('Your AI usage.');
+  await expect(page.locator('.lede')).toContainText('Mac’s menu bar');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow, max-image-preview:large');
+  await expect(page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute('content', /Illustrative Midas Mac menu bar/);
+});
+
+test('structured app data matches the visible free signed Mac download', async ({ page }) => {
+  const data = JSON.parse(await page.locator('script[type="application/ld+json"]').innerText());
+  expect(data['@context']).toBe('https://schema.org');
+  const app = data['@graph'].find((item: Record<string, unknown>) => item['@type'] === 'SoftwareApplication');
+  expect(app.name).toBe('Midas');
+  expect(app.operatingSystem).toBe('macOS 14 or later');
+  expect(app.processorRequirements).toContain('Apple Silicon');
+  expect(app.softwareVersion).toBe('0.49.4');
+  expect(app.offers).toMatchObject({ price: '0', priceCurrency: 'USD' });
+  expect(app.downloadUrl).toBe(await page.locator('a.download-link').first().getAttribute('href'));
+  expect(app.aggregateRating).toBeUndefined();
+  expect(app.review).toBeUndefined();
+  const webpage = data['@graph'].find((item: Record<string, unknown>) => item['@type'] === 'WebPage');
+  expect(webpage.mainEntity['@id']).toBe(app['@id']);
+  const faq = page.locator('#faq details').filter({ hasText: 'Can I rename my accounts?' });
+  await faq.locator('summary').click();
+  await expect(faq).toContainText('Account labels');
+  await expect(faq).toContainText('on this Mac');
+});
+
+test('robots and sitemap expose only the canonical page', async ({ request }) => {
+  const robots = await request.get('/robots.txt');
+  expect(robots.ok()).toBeTruthy();
+  expect(await robots.text()).toContain('Sitemap: https://midas-ai.dev/sitemap.xml');
+  const sitemap = await request.get('/sitemap.xml');
+  expect(sitemap.ok()).toBeTruthy();
+  const xml = await sitemap.text();
+  expect(xml.match(/<loc>/g)).toHaveLength(1);
+  expect(xml).toContain('<loc>https://midas-ai.dev/</loc>');
+  expect(xml).toContain('<lastmod>2026-10-27</lastmod>');
 });
