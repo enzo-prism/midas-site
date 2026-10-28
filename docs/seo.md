@@ -55,3 +55,16 @@ and both Sparkle latest-feed URLs. Browser tests are not field Core Web Vitals m
 - [Google: title links](https://developers.google.com/search/docs/appearance/title-link)
 - [Google: meta descriptions](https://developers.google.com/search/docs/appearance/snippet)
 - [Google: software-app structured data](https://developers.google.com/search/docs/appearance/structured-data/software-app)
+
+
+## Verified production release
+
+Feature/SEO source `c75bcb94283ab1e7d32c4182b8020803a1d94ed3` deployed through the existing Git
+integration to production as `dpl_HvqtUXhm4VpbiWcogECv8FF4jtbv` (Ready). All 21 local and all 21
+production browser checks passed. Raw production HTML confirmed the new title, description,
+canonical, and release links. The legacy host returns HTTP 308 to the canonical domain; missing
+routes return HTTP 404. Anonymous app assets and both actual latest Sparkle feeds matched their
+prepared SHA-256 checksums. The scoped Vercel error/fatal log query found no matching records;
+this static site has no application function logs to substitute for browser checks.
+
+Documentation-only commits can produce later Ready deployments with identical site output.
