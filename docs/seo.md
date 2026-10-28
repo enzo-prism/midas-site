@@ -24,13 +24,13 @@ The privacy FAQ also needed to distinguish direct provider requests from optiona
 - No invented ratings or reviews. This is descriptive entity markup, not a claim of Google
   software-app rich-result eligibility. FAQ content remains native HTML, with no promise of FAQ rich results.
 - Usage values remain illustrative. API-rate estimates are not bills or savings claims.
-- Google Search Console verification remains intact. Ownership and indexing for the canonical
-  `midas-ai.dev` property were not inspected or changed in this release; preserve any existing
-  property and submit its canonical sitemap through the owner's verified account when needed.
+- Search Console domain ownership is now verified via DNS; the sitemap is fetched and the
+  homepage is indexed with the correct canonical. GA4 is linked to the domain property.
+  See [analytics.md](analytics.md) for configuration and recrawl/processing limits.
 
 ## Validation
 
-`pnpm build` checks TypeScript and the Vite production output. `pnpm test` runs 21 browser checks,
+`pnpm build` checks TypeScript and the Vite production output. `pnpm test` runs 23 browser checks,
 including metadata consistency, structured data matching the visible free download, canonical
 URLs, robots/sitemap, image dimensions, keyboard interactions, reduced motion, privacy, and no
 horizontal overflow at 1440, 390, and 320 pixels. Run the same suite with

@@ -384,6 +384,8 @@
 <footer class="footer-shell"><div class="footer wrap">
   <a class="brand" href="#"><span class="pixel-crown" aria-hidden="true"><svg viewBox="0 0 25 22" width="25" height="22" focusable="false" aria-hidden="true"><defs><linearGradient id="crown-gold-f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6D5"/><stop offset=".38" stop-color="#F1D67A"/><stop offset=".72" stop-color="#C9A227"/><stop offset="1" stop-color="#8A6D1B"/></linearGradient></defs><path d="M0 0h3v5.7h7V0h5v5.7h7V0h3v16.5H0z M0 19.4h25V22H0z" fill="url(#crown-gold-f)"/><circle cx="12.5" cy="12" r="1.6" fill="#FFF6D8"/></svg></span>midas</a>
   <nav class="footer-links" aria-label="Footer">
+    <a href="/privacy.html">Privacy</a>
+    <button id="analytics-preferences" type="button">Analytics preferences</button>
     <a href="https://github.com/enzo-prism/midas/blob/main/docs/MIDAS_SETUP.md" target="_blank" rel="noopener noreferrer">Setup guide</a>
     <a href="https://github.com/enzo-prism/midas/releases" target="_blank" rel="noopener noreferrer">Releases</a>
     <a href="https://github.com/enzo-prism/midas/issues" target="_blank" rel="noopener noreferrer">Issues</a>
@@ -392,5 +394,9 @@
   </nav>
   <p class="footer-legal mono">MIT LICENSE · PROVIDER NAMES AND LOGOS BELONG TO THEIR OWNERS. NO ENDORSEMENT IMPLIED. DEMO VALUES ARE ILLUSTRATIVE.</p>
 </div></footer>
+<aside id="analytics-choice" class="analytics-choice" aria-labelledby="analytics-title" hidden>
+  <div><h2 id="analytics-title">Help improve Midas?</h2><p>Allow Google Analytics cookies to measure website visits and download clicks. Your app usage and account data stay out of website analytics. We also use cookieless Vercel Analytics. <a href="/privacy.html">Website privacy</a>. Change your choice anytime in the footer.</p></div>
+  <div class="analytics-actions"><button id="analytics-allow" type="button">Allow analytics</button><button id="analytics-reject" type="button">No thanks</button></div>
+</aside>
 <script type="module" src="/src/main.ts"></script>
 </body></html>

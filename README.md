@@ -16,7 +16,7 @@ Tests use installed Google Chrome through Playwright's chrome channel. Install C
 
 ## Architecture and design
 
-Static, semantic HTML with small TypeScript islands. Geist and Geist Mono fonts are self-hosted. Lucide supplies UI icons. Vercel Analytics is injected in `src/main.ts`; no auth, API keys, backend, or site-owned browser storage.
+Static, semantic HTML with small TypeScript islands. Geist and Geist Mono fonts are self-hosted. Lucide supplies UI icons. Vercel Analytics is injected in `src/main.ts`; no auth, API keys, or backend. Optional GA4 is managed by `src/analytics.ts`; analytics consent is stored in the visitor’s browser for 180 days. See [docs/analytics.md](docs/analytics.md).
 
 The site is **dark only** (2026-10-20 redesign): `color-scheme: dark`, `theme-color` `#07070a`, no theme toggle, and no light tokens. It is visual-first: short headings and one-line captions, with the explanation carried by live components rather than paragraphs. Keep it that way; put long-form detail in the app repo's docs or the GitHub release notes and link out. `index.html` owns content and metadata; `src/style.css` owns the dark tokens (`--bg`, `--fg`, `--muted`, `--dim`, `--gold`…) and layouts; `src/main.ts` owns the hero player, count-ups, the live reset countdown, the monthly chart, the menu-bar mode switcher, scroll reveal, and active-section nav highlighting. Nothing connects to real accounts.
 
@@ -78,7 +78,7 @@ Midas is a fork of CodexBar by Peter Steinberger and contributors. Provider mark
 
 ## Google Search Console
 
-Canonical, Open Graph, robots, and sitemap URLs use `https://midas-ai.dev/`. The original URL-prefix property is `https://midas-by-prism.vercel.app/` (verified by the Google meta tag in `index.html`; preserve it through redesigns); verify ownership and indexing in the canonical `midas-ai.dev` property and use sitemap `https://midas-ai.dev/sitemap.xml`. This release preserved the verification tag but did not inspect or change Search Console ownership.
+Canonical, Open Graph, robots, and sitemap URLs use `https://midas-ai.dev/`. The domain property `sc-domain:midas-ai.dev` is verified under the Prism Google account via Vercel DNS and linked to the dedicated Midas GA4 stream (`G-0WWYML8MTL`). The sitemap is submitted and fetched, and URL Inspection confirms the homepage is indexed with the correct canonical. Preserve the DNS ownership TXT and original Vercel-host HTML verification tag. See [docs/analytics.md](docs/analytics.md) for IDs, consent behavior, event settings, and verification limits.
 
 
 ## SEO maintenance

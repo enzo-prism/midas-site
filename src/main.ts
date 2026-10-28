@@ -6,6 +6,8 @@ import {
 } from 'lucide';
 import { inject } from '@vercel/analytics';
 import { mountAsciiCrown } from './ascii-crown';
+import { initAnalytics } from './analytics';
+initAnalytics();
 inject();
 createIcons({ icons: {
   Crown, RotateCw, Settings, Ellipsis, ChevronDown, Ticket, RefreshCcw, ChartColumn, Wifi, BatteryFull,
