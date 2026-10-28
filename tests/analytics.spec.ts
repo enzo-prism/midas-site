@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 // Run canonical-host behavior against our local source, without sending test traffic to Google.
 test.beforeEach(async ({ page, baseURL }) => {
-  await page.route('https://midas-ai.dev/**', async route => {
+  if (!baseURL?.includes('midas-ai.dev')) await page.route('https://midas-ai.dev/**', async route => {
     const url = new URL(route.request().url());
     const response = await route.fetch({ url: `${baseURL}${url.pathname}${url.search}` });
     await route.fulfill({ response });
@@ -11,12 +11,19 @@ test.beforeEach(async ({ page, baseURL }) => {
   await page.route(/https:\/\/[^/]*google-analytics\.com\//, route => route.abort());
 });
 
+test.afterEach(async ({ page }) => {
+  await page.waitForLoadState('networkidle');
+  await page.unrouteAll({ behavior: 'wait' });
+});
+
 test('GA4 needs opt-in, loads once, remembers consent, and withdraws cleanly', async ({ page, context }) => {
   await page.goto('https://midas-ai.dev/');
+  await page.waitForLoadState('networkidle');
   await expect(page.locator('#analytics-choice')).toBeVisible();
   await expect(page.locator('script[src*="googletagmanager"]')).toHaveCount(0);
   await page.getByRole('button', { name: 'No thanks', exact: true }).click();
   await page.reload();
+  await page.waitForLoadState('networkidle');
   await expect(page.locator('#analytics-choice')).toBeHidden();
   await expect(page.locator('script[src*="googletagmanager"]')).toHaveCount(0);
   await page.getByRole('button', { name: 'Analytics preferences', exact: true }).click();
@@ -38,6 +45,7 @@ test('GA4 needs opt-in, loads once, remembers consent, and withdraws cleanly', a
 test('expired choice is asked again and previews never load GA4', async ({ page, baseURL }) => {
   await page.addInitScript(() => localStorage.setItem('midas-analytics-consent-v1', JSON.stringify({ allowed: true, time: 0 })));
   await page.goto('https://midas-ai.dev/');
+  await page.waitForLoadState('networkidle');
   await expect(page.locator('#analytics-choice')).toBeVisible();
   await expect(page.locator('script[src*="googletagmanager"]')).toHaveCount(0);
   if (!baseURL?.includes('midas-ai.dev')) {

@@ -40,3 +40,19 @@ After deployment, use a real browser to opt in and click the actual app ZIP link
 - [Google basic consent mode](https://developers.google.com/tag-platform/security/concepts/consent-mode)
 - [Google consent implementation](https://developers.google.com/tag-platform/security/guides/consent)
 - [GA4/Search Console linking](https://support.google.com/analytics/answer/10737381)
+
+## Production evidence
+
+Implementation commit `6f465aad04a544faca758724981cd16a2c136218` deployed Ready as
+`dpl_64WteKp5Yj3TaAGAeafhRaKMNKu8` on the canonical domain. A real opt-in visit and
+app ZIP click appeared in both the GA4 Realtime API and dashboard: one page_view,
+one file_download key event, and the corresponding outbound click, first_visit and
+session_start. This is setup/test traffic, not a customer installation. The Search Console
+Queries and Google organic search traffic reports are visible in GA4 navigation, and
+the reports snapshot uses the Marketing performance template. GSC shows sitemap
+Success with one discovered page. Standard reports still need Google processing time.
+
+Build and all 23 local checks passed. All 23 production checks passed after the
+consent-test proxy was limited to local runs and in-flight request cleanup was fixed;
+the final two consent tests were also rerun locally. No Google collection occurs
+during the automated suite. The public privacy notice is served with noindex/follow.
