@@ -201,13 +201,13 @@ test('updates list releases newest-first with source links', async ({ page }) =>
   await page.getByRole('navigation').getByRole('link', { name: 'Updates' }).click();
   const entries = page.locator('.update-list > li');
   await expect(entries).toHaveCount(6);
-  await expect(entries.first()).toContainText('0.49.4');
-  await expect(entries.nth(1)).toContainText('0.49.3');
-  await expect(entries.first().getByRole('heading', { name: 'Your accounts, your labels', exact: true })).toBeVisible();
-  await expect(entries.first()).toContainText('OCT 27, 2026');
+  await expect(entries.first()).toContainText('0.49.5');
+  await expect(entries.nth(1)).toContainText('0.49.4');
+  await expect(entries.first().getByRole('heading', { name: 'Ultra limits, real reset counts', exact: true })).toBeVisible();
+  await expect(entries.first()).toContainText('NOV 1, 2026');
   await expect(entries.first().locator('.latest-pill')).toHaveText('LATEST');
   await expect(page.locator('.latest-pill')).toHaveCount(1);
-  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.49.4-midas.1');
+  await expect(entries.first().locator('.update-source')).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/tag/v0.49.5-midas.1');
   for (const entry of await entries.all()) {
     await expect(entry.locator('.update-source')).toHaveAttribute('href', /enzo-prism\/midas\/releases\/tag\//);
   }
@@ -233,10 +233,10 @@ test('download CTAs use versioned Midas arm64 app ZIP URLs', async ({ page }) =>
   const links = page.locator('a.download-link');
   expect(await links.count()).toBeGreaterThanOrEqual(2);
   for (const link of await links.all()) {
-    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.49.4-midas.1/Midas-0.49.4-macos-arm64.zip');
+    await expect(link).toHaveAttribute('href', 'https://github.com/enzo-prism/midas/releases/download/v0.49.5-midas.1/Midas-0.49.5-macos-arm64.zip');
   }
-  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.49.4');
-  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.49.4');
+  await expect(page.locator('.release-tag')).toContainText('MIDAS 0.49.5');
+  await expect(page.locator('#download .download-link')).toContainText('Download Midas 0.49.5');
   await expect(page.locator('body')).toContainText('APPLE SILICON');
 });
 
@@ -281,7 +281,7 @@ test('structured app data matches the visible free signed Mac download', async (
   expect(app.name).toBe('Midas');
   expect(app.operatingSystem).toBe('macOS 14 or later');
   expect(app.processorRequirements).toContain('Apple Silicon');
-  expect(app.softwareVersion).toBe('0.49.4');
+  expect(app.softwareVersion).toBe('0.49.5');
   expect(app.offers).toMatchObject({ price: '0', priceCurrency: 'USD' });
   expect(app.downloadUrl).toBe(await page.locator('a.download-link').first().getAttribute('href'));
   expect(app.aggregateRating).toBeUndefined();
