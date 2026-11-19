@@ -69,7 +69,11 @@ test('reduced motion shows the finished hero frame without a cursor', async ({ p
 
 test('provider marquee renders every bundled logo and a static fallback under reduced motion', async ({ page }) => {
   const logos = page.locator('.provider-set:not([aria-hidden]) img');
-  expect(await logos.count()).toBe(21);
+  expect(await logos.count()).toBe(20);
+  const names = (await page.locator('.provider-set:not([aria-hidden]) li').allTextContents()).map((name) => name.trim());
+  expect(new Set(names).size).toBe(names.length);
+  expect(names).toContain('Claude');
+  expect(names).not.toContain('Anthropic');
   for (const logo of await logos.all()) {
     expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   }
