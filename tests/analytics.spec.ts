@@ -84,14 +84,17 @@ test('opted-in visits record CTA placement, sections, FAQ opens and demo use; Ve
   await heroDownload.click();
   await page.locator('#orbit-item').click();
   await page.locator('button[data-mode="ledger"]').click();
-  await page.locator('#faq').scrollIntoViewIfNeeded();
+  // A smooth nav jump to the FAQ counts the FAQ once it settles, not the sections it scrolled past.
+  await page.locator('.header nav a[href="#faq"]').click();
+  await expect.poll(() => gaEvents(page)).toContainEqual(['section_view', { section: 'faq' }]);
   await page.locator('.faq-items summary').first().click();
   await expect.poll(() => gaEvents(page)).toContainEqual(['faq_open', { question: 'Is AI Spend my bill?' }]);
   const recorded = await gaEvents(page);
+  expect(recorded).not.toContainEqual(['section_view', { section: 'sync' }]);
+  expect(recorded).not.toContainEqual(['section_view', { section: 'trust' }]);
   expect(recorded).toContainEqual(['cta_click', { cta: 'download', cta_location: 'hero' }]);
   expect(recorded).toContainEqual(['demo_interact', expect.objectContaining({ control: 'menu_bar' })]);
   expect(recorded).toContainEqual(['demo_interact', { control: 'menu_bar_mode', choice: 'ledger' }]);
-  expect(recorded).toContainEqual(['section_view', { section: 'faq' }]);
   // Each section is reported once, and downloads stay GA4's own file_download key event.
   const sections = recorded.filter(([name]) => name === 'section_view').map(([, params]) => params.section);
   expect(new Set(sections).size).toBe(sections.length);

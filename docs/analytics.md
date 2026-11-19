@@ -28,7 +28,7 @@ Enhanced measurement is enabled for outbound clicks, scrolls, file downloads, an
 | Event | Parameters | When |
 | --- | --- | --- |
 | `cta_click` | `cta`, `cta_location` | A link with `data-cta` is clicked. `cta`: download, download_jump, source, release_notes, releases, provider_list, setup_guide, issues, privacy, codexbar, prism. `cta_location`: header, hero, providers, updates, download, footer. |
-| `section_view` | `section` | Once per page view, when a `data-section` block reaches the upper half of the viewport: hero, providers, features, menubar, sync, trust, updates, faq, download. Sections seen before opt-in are sent at opt-in. |
+| `section_view` | `section` | Once per page view, when a `data-section` block has stayed in the upper half of the viewport for one second in a visible tab, so sections a smooth nav jump scrolls past are not counted: hero, providers, features, menubar, sync, trust, updates, faq, download. Sections seen before opt-in are sent at opt-in. |
 | `faq_open` | `question` | A FAQ answer is expanded. |
 | `demo_interact` | `control`, `choice` | A visitor uses a demo control: menu_bar (open/close), period, chart_metric, menu_bar_mode, spend_privacy (on/off). The autoplaying recording never sends it. |
 
