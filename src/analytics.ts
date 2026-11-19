@@ -2,6 +2,8 @@
 const measurementId = 'G-0WWYML8MTL';
 const preferenceKey = 'midas-analytics-consent-v1';
 const preferenceLifetime = 180 * 24 * 60 * 60 * 1000;
+// Set by visiting `?internal=1` (cleared by `?internal=0`): marks this browser as the team's own.
+const internalKey = 'midas-internal-v1';
 
 type AnalyticsWindow = Window & {
   dataLayer?: IArguments[];
@@ -9,8 +11,49 @@ type AnalyticsWindow = Window & {
   [key: `ga-disable-${string}`]: boolean;
 };
 
+const browser = window as unknown as AnalyticsWindow;
+let tagReady = false;
+let internal = false;
+const readyListeners: (() => void)[] = [];
+
+/** Reads and strips the `internal` query flag before any analytics script sees the URL. */
+function readInternalFlag() {
+  const url = new URL(location.href);
+  const flag = url.searchParams.get('internal');
+  try {
+    if (flag === '1') localStorage.setItem(internalKey, '1');
+    else if (flag === '0') localStorage.removeItem(internalKey);
+    internal = localStorage.getItem(internalKey) === '1';
+  } catch {
+    // Storage can be disabled; the flag then lasts for this visit only.
+    internal = flag === '1';
+  }
+  if (flag === null) return;
+  url.searchParams.delete('internal');
+  history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
+/** True for the team's own browsers. GA4 tags their traffic as internal; Vercel events are dropped. */
+export const isInternalVisit = () => internal;
+
+/**
+ * Sends a GA4 event only when the visitor has opted in on the canonical site. Before consent, or on
+ * localhost and previews, it does nothing and returns false. Never pass personal data in params.
+ */
+export function trackEvent(name: string, params: Record<string, string>): boolean {
+  if (!tagReady) return false;
+  browser.gtag!('event', name, params);
+  return true;
+}
+
+/** Runs once GA4 is enabled (immediately when it already is), so callers can resend views. */
+export function onAnalyticsReady(listener: () => void) {
+  if (tagReady) listener();
+  else readyListeners.push(listener);
+}
+
 export function initAnalytics() {
-  const browser = window as unknown as AnalyticsWindow;
+  readInternalFlag();
   const banner = document.querySelector<HTMLElement>('#analytics-choice')!;
   const preferences = document.querySelector<HTMLButtonElement>('#analytics-preferences')!;
   const allow = document.querySelector<HTMLButtonElement>('#analytics-allow')!;
@@ -42,11 +85,15 @@ export function initAnalytics() {
       allow_ad_personalization_signals: false,
       cookie_expires: 15552000,
       cookie_update: false,
+      // GA4's internal-traffic data filter matches this value on every event from this config.
+      ...(internal ? { traffic_type: 'internal' } : {}),
     });
     const script = document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
     document.head.append(script);
+    tagReady = true;
+    readyListeners.splice(0).forEach(listener => listener());
   }
 
   function choose(allowed: boolean) {
@@ -54,6 +101,7 @@ export function initAnalytics() {
     banner.hidden = true;
     if (allowed) enable();
     else {
+      tagReady = false;
       browser[`ga-disable-${measurementId}`] = true;
       // Remove this site's GA cookies, including domain cookies, when consent is withdrawn.
       for (const cookie of document.cookie.split(';')) {

@@ -6,9 +6,12 @@ import {
 } from 'lucide';
 import { inject } from '@vercel/analytics';
 import { mountAsciiCrown } from './ascii-crown';
-import { initAnalytics } from './analytics';
+import { initAnalytics, isInternalVisit } from './analytics';
+import { initEngagement, trackDemo } from './engagement';
 initAnalytics();
-inject();
+// The team's own browsers (`?internal=1`) stay out of Vercel's counts.
+inject({ beforeSend: event => (isInternalVisit() ? null : event) });
+initEngagement();
 createIcons({ icons: {
   Crown, RotateCw, Settings, Ellipsis, ChevronDown, Ticket, RefreshCcw, ChartColumn, Wifi, BatteryFull,
   ArrowUpRight, ArrowDown, Download, KeyRound, MessageSquareOff, Package, Plus, EyeOff, Network, UserX, Hash, History,
@@ -158,11 +161,17 @@ function takeOver() {
   clearTimeout(resumeTimer);
   if (!reduceMotion.matches) resumeTimer = window.setTimeout(() => { void autoplay(); }, 9000);
 }
-orbitItem.addEventListener('click', event => { if (event.isTrusted) { takeOver(); setPanel(!panel.classList.contains('is-open')); } });
+orbitItem.addEventListener('click', event => {
+  if (!event.isTrusted) return;
+  takeOver();
+  setPanel(!panel.classList.contains('is-open'));
+  trackDemo('menu_bar', panel.classList.contains('is-open') ? 'open' : 'close');
+});
 periodButton.addEventListener('click', event => {
   if (!event.isTrusted) return;
   takeOver();
   setPeriod((activePeriod + 1) % periods.length);
+  trackDemo('period', periods[activePeriod].name);
 });
 new IntersectionObserver(([entry]) => {
   stageVisible = Boolean(entry?.isIntersecting);
@@ -228,6 +237,7 @@ renderChart('cost', false);
 document.querySelectorAll<HTMLButtonElement>('[data-metric]').forEach(button => button.addEventListener('click', () => {
   document.querySelectorAll('[data-metric]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
   renderChart(button.dataset.metric as Metric);
+  trackDemo('chart_metric', button.dataset.metric!);
 }));
 
 // Illustrative DGX Spark daily tokens. Days before collection started stay unpriced stubs, not zeros.
@@ -266,7 +276,8 @@ function selectMode(mode: string) {
   caption.style.animation = '';
 }
 tabs.forEach((tab, index) => {
-  tab.addEventListener('click', () => { modesStage.classList.add('is-paused'); selectMode(tab.dataset.mode!); });
+  // Auto-advance calls selectMode directly, so every click here is the visitor's (keyboard arrows included).
+  tab.addEventListener('click', () => { modesStage.classList.add('is-paused'); selectMode(tab.dataset.mode!); trackDemo('menu_bar_mode', tab.dataset.mode!); });
   tab.addEventListener('keydown', event => {
     const offset = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
     if (!offset) return;
@@ -289,6 +300,7 @@ privacy.addEventListener('click', () => {
   const on = privacy.getAttribute('aria-pressed') !== 'true';
   privacy.setAttribute('aria-pressed', String(on));
   modeView.classList.toggle('is-private', on);
+  trackDemo('spend_privacy', on ? 'on' : 'off');
 });
 
 // ---------------------------------------------------------------------------------------------

@@ -298,7 +298,7 @@ test('structured app data matches the visible free signed Mac download', async (
   await expect(faq).toContainText('on this Mac');
 });
 
-test('robots and sitemap expose only the canonical page', async ({ request }) => {
+test('robots and sitemap expose only the canonical page', async ({ request, page }) => {
   const robots = await request.get('/robots.txt');
   expect(robots.ok()).toBeTruthy();
   expect(await robots.text()).toContain('Sitemap: https://midas-ai.dev/sitemap.xml');
@@ -307,5 +307,10 @@ test('robots and sitemap expose only the canonical page', async ({ request }) =>
   const xml = await sitemap.text();
   expect(xml.match(/<loc>/g)).toHaveLength(1);
   expect(xml).toContain('<loc>https://midas-ai.dev/</loc>');
-  expect(xml).toContain('<lastmod>2026-10-27</lastmod>');
+  // The sitemap's lastmod and the WebPage dateModified describe the same content change.
+  await page.goto('/');
+  const graph = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent() ?? '{}')['@graph'] ?? [];
+  const modified = graph.find((entity: { '@type'?: string }) => entity['@type'] === 'WebPage')?.dateModified;
+  expect(modified).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  expect(xml).toContain(`<lastmod>${modified}</lastmod>`);
 });

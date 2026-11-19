@@ -30,7 +30,7 @@ The privacy FAQ also needed to distinguish direct provider requests from optiona
 
 ## Validation
 
-`pnpm build` checks TypeScript and the Vite production output. `pnpm test` runs 23 browser checks,
+`pnpm build` checks TypeScript and the Vite production output. `pnpm test` runs 25 browser checks,
 including metadata consistency, structured data matching the visible free download, canonical
 URLs, robots/sitemap, image dimensions, keyboard interactions, reduced motion, privacy, and no
 horizontal overflow at 1440, 390, and 320 pixels. Run the same suite with
@@ -44,7 +44,8 @@ and both Sparkle latest-feed URLs. Browser tests are not field Core Web Vitals m
 2. Update both download links, release tag, signed-update illustration, softwareVersion,
    structured downloadUrl, newest update card, README checksum, and browser assertions together.
 3. Keep six update cards and exactly one LATEST badge. Use the actual local release date.
-4. Change sitemap lastmod and WebPage dateModified only when page content changes.
+4. Change sitemap lastmod and WebPage dateModified together, only when page content changes.
+   A browser test fails if the two dates differ.
 5. Test locally, push this repository's main, then confirm the linked `midas-by-prism`
    production deployment is Ready and serves that exact commit on `midas-ai.dev`.
 6. Re-run production checks and record evidence. Search engines choose their own title links

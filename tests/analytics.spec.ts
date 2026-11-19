@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 // Run canonical-host behavior against our local source, without sending test traffic to Google.
 test.beforeEach(async ({ page, baseURL }) => {
@@ -9,7 +9,18 @@ test.beforeEach(async ({ page, baseURL }) => {
   });
   await page.route('https://www.googletagmanager.com/**', route => route.fulfill({ body: '', contentType: 'application/javascript' }));
   await page.route(/https:\/\/[^/]*google-analytics\.com\//, route => route.abort());
+  // Keep Vercel's queue local so test runs never count as visits or downloads, even against production.
+  await page.route('**/_vercel/insights/**', route => route.fulfill({ body: '', contentType: 'application/javascript' }));
 });
+
+type Recorded = [string, Record<string, string>];
+const gaEvents = (page: Page) => page.evaluate(() => ((window as any).dataLayer ?? [])
+  .map((args: IArguments) => Array.from(args))
+  .filter((args: unknown[]) => args[0] === 'event')
+  .map((args: unknown[]) => [args[1], args[2]])) as Promise<Recorded[]>;
+const gaConfig = (page: Page) => page.evaluate(() => ((window as any).dataLayer ?? [])
+  .map((args: IArguments) => Array.from(args))
+  .find((args: unknown[]) => args[0] === 'config')?.[2]);
 
 test.afterEach(async ({ page }) => {
   await page.waitForLoadState('networkidle');
@@ -53,4 +64,59 @@ test('expired choice is asked again and previews never load GA4', async ({ page,
     await page.getByRole('button', { name: 'Allow analytics', exact: true }).click();
     await expect(page.locator('script[src*="googletagmanager"]')).toHaveCount(0);
   }
+});
+
+test('opted-in visits record CTA placement, sections, FAQ opens and demo use; Vercel counts every download click', async ({ page }) => {
+  await page.goto('https://midas-ai.dev/');
+  await page.waitForLoadState('networkidle');
+  // Keep download clicks on the page; only what gets recorded matters here.
+  await page.evaluate(() => document.addEventListener('click', event => {
+    if ((event.target as Element).closest('a[data-cta="download"]')) event.preventDefault();
+  }));
+  const heroDownload = page.locator('a[data-cta="download"][data-cta-location="hero"]');
+  await heroDownload.click();
+  expect(await gaEvents(page)).toEqual([]);
+  expect(await page.evaluate(() => JSON.stringify((window as any).vaq ?? []))).toContain('{"name":"Download","data":{"location":"hero"}}');
+
+  await page.getByRole('button', { name: 'Allow analytics', exact: true }).click();
+  // The hero was already on screen before consent; it is still reported once.
+  await expect.poll(() => gaEvents(page)).toContainEqual(['section_view', { section: 'hero' }]);
+  await heroDownload.click();
+  await page.locator('#orbit-item').click();
+  await page.locator('button[data-mode="ledger"]').click();
+  await page.locator('#faq').scrollIntoViewIfNeeded();
+  await page.locator('.faq-items summary').first().click();
+  await expect.poll(() => gaEvents(page)).toContainEqual(['faq_open', { question: 'Is AI Spend my bill?' }]);
+  const recorded = await gaEvents(page);
+  expect(recorded).toContainEqual(['cta_click', { cta: 'download', cta_location: 'hero' }]);
+  expect(recorded).toContainEqual(['demo_interact', expect.objectContaining({ control: 'menu_bar' })]);
+  expect(recorded).toContainEqual(['demo_interact', { control: 'menu_bar_mode', choice: 'ledger' }]);
+  expect(recorded).toContainEqual(['section_view', { section: 'faq' }]);
+  // Each section is reported once, and downloads stay GA4's own file_download key event.
+  const sections = recorded.filter(([name]) => name === 'section_view').map(([, params]) => params.section);
+  expect(new Set(sections).size).toBe(sections.length);
+  expect(recorded.some(([name]) => name === 'file_download')).toBe(false);
+});
+
+test('?internal=1 tags GA4 traffic as internal, drops Vercel events and cleans the URL; ?internal=0 clears it', async ({ page }) => {
+  await page.goto('https://midas-ai.dev/?internal=1&utm_source=test#faq');
+  await page.waitForLoadState('networkidle');
+  expect(page.url()).toBe('https://midas-ai.dev/?utm_source=test#faq');
+  expect(await page.evaluate(() => localStorage.getItem('midas-internal-v1'))).toBe('1');
+  await page.getByRole('button', { name: 'Allow analytics', exact: true }).click();
+  expect((await gaConfig(page))?.traffic_type).toBe('internal');
+  const vercelKeeps = () => page.evaluate(() => {
+    const filter = ((window as any).vaq ?? []).find((args: unknown[]) => args[0] === 'beforeSend')?.[1];
+    return filter({ type: 'event', url: location.href }) !== null;
+  });
+  expect(await vercelKeeps()).toBe(false);
+
+  await page.goto('https://midas-ai.dev/?internal=0');
+  await page.waitForLoadState('networkidle');
+  expect(page.url()).toBe('https://midas-ai.dev/');
+  expect(await page.evaluate(() => localStorage.getItem('midas-internal-v1'))).toBeNull();
+  // Consent is remembered, so the tag loads again, now without the internal marker.
+  await expect.poll(() => gaConfig(page)).toBeTruthy();
+  expect((await gaConfig(page))?.traffic_type).toBeUndefined();
+  expect(await vercelKeeps()).toBe(true);
 });

@@ -19,7 +19,28 @@ Configured October 27, 2026, under Prism's existing Google account (`enzo@design
 
 Basic consent mode defaults analytics and all three advertising consent types to denied; only analytics becomes granted. Google signals and advertising personalization are disabled in tag configuration. GA cookies expire after 180 days without refreshing on activity. No User-ID, app usage, saved account labels, prompts, or provider credentials are sent. Stream-level email redaction and sensitive query-key redaction (`email`, `token`, `code`, `key`, `password`, `user_id`) are enabled. Campaign parameters remain available for attribution; never put private data in URLs.
 
-Enhanced measurement is enabled for outbound clicks, scrolls, file downloads, and browser history changes. Search, video and form collection are disabled because this page has no corresponding product flows. The normal config sends the initial page view; do not add a second manual page_view. `file_download` is a key event, counted once per event. A click is not proof of download completion, installation or app use. No custom parallel download event duplicates it.
+Enhanced measurement is enabled for outbound clicks, scrolls, file downloads, and browser history changes. Search, video and form collection are disabled because this page has no corresponding product flows. The normal config sends the initial page view; do not add a second manual page_view. `file_download` is a key event, counted once per event. A click is not proof of download completion, installation or app use. No custom parallel download event duplicates it in GA4; `cta_click` below records only where the click happened and is not a key event.
+
+## Engagement events
+
+`src/engagement.ts` and the demo handlers in `src/main.ts` send these GA4 events through `trackEvent()`, which does nothing before opt-in, on localhost or on previews. Parameters are fixed page labels, never visitor data.
+
+| Event | Parameters | When |
+| --- | --- | --- |
+| `cta_click` | `cta`, `cta_location` | A link with `data-cta` is clicked. `cta`: download, download_jump, source, release_notes, releases, provider_list, setup_guide, issues, privacy, codexbar, prism. `cta_location`: header, hero, providers, updates, download, footer. |
+| `section_view` | `section` | Once per page view, when a `data-section` block reaches the upper half of the viewport: hero, providers, features, menubar, sync, trust, updates, faq, download. Sections seen before opt-in are sent at opt-in. |
+| `faq_open` | `question` | A FAQ answer is expanded. |
+| `demo_interact` | `control`, `choice` | A visitor uses a demo control: menu_bar (open/close), period, chart_metric, menu_bar_mode, spend_privacy (on/off). The autoplaying recording never sends it. |
+
+New links that matter get `data-cta` and `data-cta-location`; new page sections get `data-section`. To report on the parameters in GA4, register event-scoped custom dimensions for `cta`, `cta_location`, `section`, `control`, `choice` and `question` (Admin → Custom definitions). Until they are registered, the events count but their parameters are not reportable.
+
+Vercel Web Analytics also receives a cookieless `Download` custom event with `location` (hero or download) for every visitor's download click, consent or not (custom events need the team's Pro plan, which it has). Use it for the true click count and GA4 for sources and behavior; GA4 sees only visitors who opt in.
+
+## Internal traffic
+
+Visiting `https://midas-ai.dev/?internal=1` once marks that browser as the team's own (`midas-internal-v1` in localStorage); `?internal=0` clears it. The flag is removed from the address bar before any analytics script reads the URL. Marked browsers send `traffic_type: internal` on every GA4 event and are dropped from Vercel Web Analytics by `beforeSend`. In GA4, set the predefined Internal Traffic data filter (Admin → Data filters) to Active to exclude them; in Testing state it only labels them.
+
+## Retention and limits
 
 GA4 event retention is two months. Vercel's existing cookieless Web Analytics remains separate. `/privacy.html` discloses both tools, cookies, purpose and withdrawal. It has no analytics tag and is noindex/follow, so the sitemap continues listing only the marketing homepage.
 
@@ -31,7 +52,7 @@ Sitemap submission and read-back succeeded: one web URL, fetched by Google. URL 
 
 ## Verify and maintain
 
-Run `pnpm build` and all browser tests before pushing main. Consent tests proxy local source under the canonical origin and stub the Google tag, preventing test traffic. They check default blocking, refusal persistence, one tag/config, expiry, withdrawal/cookie removal and preview exclusion. For public smoke tests, run `BASE_URL=https://midas-ai.dev pnpm test`; tests similarly stub Google.
+Run `pnpm build` and all browser tests before pushing main; the tests expect a running `pnpm preview` on port 4173 unless `BASE_URL` is set. Consent tests proxy local source under the canonical origin and stub the Google tag and Vercel's analytics script, preventing test traffic. They check default blocking, refusal persistence, one tag/config, expiry, withdrawal/cookie removal, preview exclusion, the engagement events, the Vercel download event and the internal-traffic flag. For public smoke tests, run `BASE_URL=https://midas-ai.dev pnpm test`; tests similarly stub Google.
 
 After deployment, use a real browser to opt in and click the actual app ZIP link once, then verify page_view and file_download in the dedicated GA4 Realtime report. Do not count this verification visit as a customer conversion. Google reports can lag; absence immediately after an event is not proof of failure. GSC performance data and the GA4 Search Console reports need additional processing. Keep website analytics separate from the private Midas usage hub.
 
