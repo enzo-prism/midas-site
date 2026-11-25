@@ -187,6 +187,25 @@ The privacy FAQ also needed to distinguish direct provider requests from optiona
 - [Google: software-app structured data](https://developers.google.com/search/docs/appearance/structured-data/software-app)
 
 
+## Verified production release (November 24, 2026, SEO/AEO pages)
+
+Source `80828f7e071983ed25ccb07ab9efcfe18b8f04b0` deployed through the Git integration to production as
+`dpl_6AFnJEPTQGrquPyfwDdsN3bKWpSV` (Ready, aliased to `midas-ai.dev`). All 43 local and all 43
+production browser checks (`BASE_URL=https://midas-ai.dev pnpm test`) passed.
+
+Raw production readback:
+
+- `/`, `/claude`, `/codex`, `/cursor`, `/gemini`, `/providers`, `/ai-spend`, `/privacy`, `/llms.txt`,
+  `/robots.txt` and `/sitemap.xml` return 200.
+- `/claude/`, `/claude.html` and the legacy `midas-by-prism.vercel.app/claude` return 308 to
+  `https://midas-ai.dev/claude`.
+- A missing route returns 404.
+- `/404` sends `X-Robots-Tag: noindex`, and `llms.txt` is served as `text/plain; charset=utf-8`.
+
+`www.midas-ai.dev` still answers with a 307 (temporary) redirect to the apex. It is not one of this
+project's domains (the project has only `midas-ai.dev` and `midas-by-prism.vercel.app`), so the
+redirect is configured outside this repository. Making it a 308 is a domain-settings change.
+
 ## Verified production release (October 2026, 0.49.4)
 
 Feature/SEO source `c75bcb94283ab1e7d32c4182b8020803a1d94ed3` deployed through the existing Git
