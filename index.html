@@ -135,7 +135,8 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="header-shell"><header class="header wrap">
   <a class="brand" href="#" aria-label="Midas home"><span class="pixel-crown" aria-hidden="true"><svg viewBox="0 0 25 22" width="25" height="22" focusable="false" aria-hidden="true"><defs><linearGradient id="crown-gold-h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6D5"/><stop offset=".38" stop-color="#F1D67A"/><stop offset=".72" stop-color="#C9A227"/><stop offset="1" stop-color="#8A6D1B"/></linearGradient></defs><path d="M0 0h3v5.7h7V0h5v5.7h7V0h3v16.5H0z M0 19.4h25V22H0z" fill="url(#crown-gold-h)"/><circle cx="12.5" cy="12" r="1.6" fill="#FFF6D8"/></svg></span><span>midas</span></a>
-  <nav aria-label="Main navigation"><a href="#features">Features</a><a href="#menubar">Menu bar</a><a href="#sync">Sync</a><a href="#updates">Updates</a><a href="#faq">FAQ</a><a class="nav-external" data-cta="source" data-cta-location="header" href="https://github.com/enzo-prism/midas" target="_blank" rel="noopener noreferrer">GitHub <i data-lucide="arrow-up-right"></i></a></nav>
+  <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu"><i data-lucide="menu" class="icon-open"></i><i data-lucide="x" class="icon-close"></i></button>
+  <nav id="site-nav" aria-label="Main navigation"><a href="#features">Features</a><a href="#menubar">Menu bar</a><a href="#sync">Sync</a><a href="#updates">Updates</a><a href="#faq">FAQ</a><a class="nav-external" data-cta="source" data-cta-location="header" href="https://github.com/enzo-prism/midas" target="_blank" rel="noopener noreferrer">GitHub <i data-lucide="arrow-up-right"></i></a><span class="nav-pages"><a href="/claude">Claude tracker</a><a href="/codex">Codex tracker</a><a href="/cursor">Cursor tracker</a><a href="/gemini">Gemini tracker</a><a href="/providers">All providers</a><a href="/ai-spend">AI spend</a></span></nav>
   <a class="button button-small" data-cta="download_jump" data-cta-location="header" href="#download">Download <i data-lucide="arrow-down"></i></a>
 </header></div>
 
@@ -151,7 +152,7 @@
         <a class="button button-primary download-link" data-cta="download" data-cta-location="hero" href="https://github.com/enzo-prism/midas/releases/download/v0.52.0-midas.1/Midas-0.52.0-macos-arm64.zip"><i data-lucide="download"></i> Download for Mac</a>
         <a class="button button-ghost" data-cta="source" data-cta-location="hero" href="https://github.com/enzo-prism/midas" target="_blank" rel="noopener noreferrer">View source <i data-lucide="arrow-up-right"></i></a>
       </div>
-      <p class="compatibility mono">FREE &amp; OPEN SOURCE <span>·</span> APPLE SILICON <span>·</span> macOS 14+ <span>·</span> SIGNED &amp; NOTARIZED</p>
+      <p class="compatibility mono"><span>FREE &amp; OPEN SOURCE</span><span>APPLE SILICON</span><span>macOS 14+</span><span>SIGNED &amp; NOTARIZED</span></p>
     </div>
 
     <figure class="stage-wrap wrap" id="product">
@@ -221,10 +222,10 @@
           <span class="callout c2">Every limit, its own bar</span>
           <span class="callout c3">No limit? No invented %</span>
         </div>
-        <svg class="cursor" id="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8.2-6.3 1.4L9.6 19z" /></svg>
+        <svg class="cursor" id="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8.2-6.3 1.4L9.6 19z" /><circle class="fingertip" cx="12" cy="12" r="9" /></svg>
         <span class="click-ring" id="click-ring" aria-hidden="true"></span>
       </div>
-      <figcaption class="demo-disclaimer mono">ILLUSTRATIVE VALUES · NOT REAL ACCOUNTS · CLICK THE MENU BAR OR THE PERIOD TO PLAY</figcaption>
+      <figcaption class="demo-disclaimer mono">ILLUSTRATIVE VALUES · NOT REAL ACCOUNTS · <span class="pointer-fine">CLICK</span><span class="pointer-coarse">TAP</span> THE MENU BAR OR THE PERIOD TO PLAY</figcaption>
     </figure>
   </section>
 
@@ -277,14 +278,6 @@
         <div class="chart" id="chart" aria-hidden="true"></div>
       </article>
 
-      <article class="card card-billed" data-reveal>
-        <div class="card-copy"><h3>Billed stays separate.</h3><p>Claude API spend, never added twice.</p></div>
-        <div class="ledgers" aria-hidden="true">
-          <div class="ledger"><span class="mono">ESTIMATED</span><b class="mono-digits">$391.35</b></div>
-          <div class="ledger-divider mono">KEPT APART</div>
-          <div class="ledger ledger-billed"><span class="mono"><img src="/providers/claude.svg" alt="" /> BILLED API</span><b class="mono-digits">$84.12</b></div>
-        </div>
-      </article>
 
       <article class="card card-wide card-spark" id="dgx-spark" data-reveal>
         <div class="card-copy"><img class="nvidia-logo" src="/providers/nvidia-dark.svg" alt="NVIDIA" /><h3>DGX Spark. Local tokens, cloud value.</h3><p>Last 30 days of local vLLM tokens, compared with a named hosted API rate.</p><span class="chip mono">API-EQUIVALENT, NOT A BILL</span></div>
@@ -294,9 +287,19 @@
         </div>
       </article>
 
+      <div class="bento-rail">
+      <article class="card card-billed" data-reveal>
+        <div class="card-copy"><h3>Billed stays separate.</h3><p>Claude API spend, never added twice.</p></div>
+        <div class="ledgers" aria-hidden="true">
+          <div class="ledger"><span class="mono">ESTIMATED</span><b class="mono-digits">$391.35</b></div>
+          <div class="ledger-divider mono">KEPT APART</div>
+          <div class="ledger ledger-billed"><span class="mono"><img src="/providers/claude.svg" alt="" /> BILLED API</span><b class="mono-digits">$84.12</b></div>
+        </div>
+      </article>
+
       <article class="card card-private" data-reveal>
         <div class="card-copy"><h3>Stays on your Mac.</h3><p>Reuses your sign-ins. Stores no passwords.</p></div>
-        <ul class="vault" aria-hidden="true"><li><i data-lucide="key-round"></i>Keys in Keychain</li><li><i data-lucide="message-square-off"></i>Prompts never leave</li><li><i data-lucide="package"></i>Logos bundled</li></ul>
+        <ul class="vault" aria-hidden="true"><li><i data-lucide="key-round"></i>Sign-ins cached in Keychain</li><li><i data-lucide="message-square-off"></i>Prompts never leave</li><li><i data-lucide="package"></i>Logos bundled</li></ul>
       </article>
 
       <article class="card card-native" data-reveal>
@@ -308,6 +311,7 @@
         <div class="card-copy"><h3>Signed updates.</h3><p>Notarized, delivered in-app.</p></div>
         <div class="update-sheet" aria-hidden="true"><span class="pixel-crown"><svg viewBox="0 0 25 22" width="25" height="22" focusable="false" aria-hidden="true"><defs><linearGradient id="crown-gold-u" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6D5"/><stop offset=".38" stop-color="#F1D67A"/><stop offset=".72" stop-color="#C9A227"/><stop offset="1" stop-color="#8A6D1B"/></linearGradient></defs><path d="M0 0h3v5.7h7V0h5v5.7h7V0h3v16.5H0z M0 19.4h25V22H0z" fill="url(#crown-gold-u)"/><circle cx="12.5" cy="12" r="1.6" fill="#FFF6D8"/></svg></span><div><b>Midas 0.52.0</b><span class="progress"><span></span></span></div><span class="sheet-button">Install &amp; Restart</span></div>
       </article>
+      </div>
     </div>
   </section>
 
@@ -414,7 +418,7 @@
     <div class="wrap download-inner" data-reveal>
       <h2 id="download-title">Stop guessing.</h2>
       <a class="button button-primary button-large download-link" data-cta="download" data-cta-location="download" href="https://github.com/enzo-prism/midas/releases/download/v0.52.0-midas.1/Midas-0.52.0-macos-arm64.zip"><i data-lucide="download"></i> Download Midas 0.52.0</a>
-      <p class="compatibility mono">APPLE SILICON <span>·</span> macOS 14+ <span>·</span> SIGNED &amp; NOTARIZED <span>·</span> MIT</p>
+      <p class="compatibility mono"><span>APPLE SILICON</span><span>macOS 14+</span><span>SIGNED &amp; NOTARIZED</span><span>MIT</span></p>
       <ol class="install-steps">
         <li><span class="step-icon"><i data-lucide="file-archive"></i></span><span>Unzip</span></li>
         <li><span class="step-icon"><i data-lucide="folder-open"></i></span><span>Move to Applications</span></li>

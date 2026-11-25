@@ -20,7 +20,7 @@
 .kicker{display:inline-flex;align-items:center;gap:10px;color:var(--gold)}
 .kicker img{width:18px;height:18px;filter:brightness(0) invert(1)}
 .kicker img.preserve-color{filter:none}
-.updated{margin-top:20px;color:var(--dim);font-size:10px}
+.updated{margin-top:20px;color:var(--dim);font-size:11px}
 
 .pcard-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
 .pcard{width:min(380px,100%);border-radius:14px;background:var(--panel);border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 .5px rgba(0,0,0,.8),0 30px 80px -10px rgba(0,0,0,.75),0 0 120px -40px rgba(233,196,106,.35);font-size:13px;color:#f2f0ec;overflow:hidden}
@@ -28,7 +28,7 @@
 .pcard img.preserve-color{filter:none}
 .pcard .panel-total{padding:10px 16px 12px}
 .pcard .panel-amount{font-size:30px}
-.pcard-note{color:var(--dim);font-size:10px;text-align:center}
+.pcard-note{color:var(--dim);font-size:11px;text-align:center}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chips .banked{font-size:11px}
 
@@ -99,11 +99,28 @@
   .facts,.ptable{grid-template-columns:1fr 1fr}
 }
 @media(max-width:680px){
-  .sub-hero{padding-top:36px}
+  .sub-hero{padding-top:28px}
+  .sub-hero .compatibility{justify-content:flex-start}
+  .sub-hero .handoff-direct{padding-left:0}
   .facts,.ptable{grid-template-columns:1fr}
-  .sub-section{padding-top:80px}
-  .sub-download{margin-top:96px}
+  .sub-section{padding-top:64px}
+  .sub-download{margin-top:64px}
   .formula{font-size:15px}
+  /* Related pages: a 2-column grid of full-size tap targets. */
+  .related{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .related a{min-height:48px;padding:10px 12px;border-radius:14px;font-size:14.5px}
+  /* Provider list: compact rows instead of tall cards. */
+  .ptable{margin-top:20px;gap:0;border-top:1px solid var(--line)}
+  .ptable li{gap:4px;padding:14px 2px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none}
+  .ptable li.is-featured{border-color:var(--line)}
+  .ptable h3{font-size:16px}
+  .ptable h3 a{display:inline-block;padding:11px 0;margin:-11px 0}
+  .ptable p{font-size:14px;line-height:1.45}
+  .ptable .mono{font-size:11px}
+  .group-title{margin-top:44px;font-size:20px}
+  .group-title .mono{font-size:11px}
+  .crumbs{font-size:12px}
+  .crumbs a{padding:13px 0;margin:-13px 0}
 }
 
 .kicker svg.lucide{width:16px;height:16px}
@@ -118,3 +135,8 @@
 .updated,.pcard-note,.crumbs,.group-title .mono,.provider-footnote,.ptable .mono{color:#8a867e}
 /* Below-the-fold sections render on approach, which keeps first paint and layout cheap. */
 .sub-section,.ptable,.sub-download,.footer-shell{content-visibility:auto;contain-intrinsic-size:auto 900px}
+/* Jump links to each provider group. */
+.group-jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.group-jump a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line-2);background:rgba(255,255,255,.03);font-size:14.5px;font-weight:550;transition:border-color .2s}
+.group-jump a:hover{border-color:rgba(233,196,106,.5)}
+

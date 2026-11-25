@@ -2,23 +2,27 @@ import './style.css';
 import {
   createIcons, Crown, RotateCw, Settings, Ellipsis, ChevronDown, Ticket, RefreshCcw, ChartColumn, Wifi, BatteryFull,
   ArrowUpRight, ArrowRight, ArrowDown, Download, KeyRound, MessageSquareOff, Package, Plus, EyeOff, Network, UserX, Hash, History,
-  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles, Coins,
+  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles, Coins, Menu, X, Send,
 } from 'lucide';
 import { inject } from '@vercel/analytics';
 import { mountAsciiCrown } from './ascii-crown';
 import { initAnalytics, isInternalVisit } from './analytics';
 import { initEngagement, trackDemo } from './engagement';
+import { initMobile } from './mobile';
 initAnalytics();
 // The team's own browsers (`?internal=1`) stay out of Vercel's counts.
 inject({ beforeSend: event => (isInternalVisit() ? null : event) });
 initEngagement();
+initMobile();
 createIcons({ icons: {
   Crown, RotateCw, Settings, Ellipsis, ChevronDown, Ticket, RefreshCcw, ChartColumn, Wifi, BatteryFull,
   ArrowUpRight, ArrowRight, ArrowDown, Download, KeyRound, MessageSquareOff, Package, Plus, EyeOff, Network, UserX, Hash, History,
-  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles, Coins,
+  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles, Coins, Menu, X, Send,
 } });
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+// Touch screens get a fingertip instead of an arrow pointer in the hero recording.
+const coarsePointer = matchMedia('(pointer: coarse)');
 const $ = <T extends Element = HTMLElement>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector)!;
 const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 const money = (value: number) => `$${value.toFixed(2)}`;
@@ -88,7 +92,8 @@ function pointOf(element: HTMLElement, dx = 0.5, dy = 0.5) {
 }
 function moveCursor(element: HTMLElement, dx = 0.5, dy = 0.5) {
   const { x, y } = pointOf(element, dx, dy);
-  cursor.style.transform = `translate(${x - 5}px, ${y - 3}px)`;
+  // The arrow's tip sits at (5, 3) in its 26px box; the fingertip is centered.
+  cursor.style.transform = coarsePointer.matches ? `translate(${x - 13}px, ${y - 13}px)` : `translate(${x - 5}px, ${y - 3}px)`;
   clickRing.style.left = `${x}px`;
   clickRing.style.top = `${y}px`;
 }

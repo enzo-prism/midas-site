@@ -9,7 +9,8 @@ import { onAnalyticsReady, trackEvent } from './analytics';
 export function initEngagement() {
   document.addEventListener('click', event => {
     const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[data-cta]');
-    if (!link) return;
+    // Send-to-Mac buttons on phones record their own `send_to_mac` event (see mobile.ts).
+    if (!link || link.classList.contains('is-handoff')) return;
     const cta = link.dataset.cta!;
     const location = link.dataset.ctaLocation!;
     trackEvent('cta_click', { cta, cta_location: location });

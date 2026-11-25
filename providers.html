@@ -107,7 +107,8 @@
   </section>
 
   <section class="wrap" data-section="providers" aria-label="Supported providers">
-    <h2 class="group-title">Guided setup <span class="mono">5 · IN ONBOARDING</span></h2>
+    <nav class="group-jump" aria-label="Provider groups"><a href="#guided">Guided setup</a><a href="#assistants">Coding assistants</a><a href="#apis">Model APIs</a><a href="#cloud">Cloud and local</a></nav>
+    <h2 class="group-title" id="guided">Guided setup <span class="mono">5 · IN ONBOARDING</span></h2>
     <ul class="ptable">
         <li class="is-featured"><h3><img src="/providers/codex.svg" alt="" /><a href="/codex">Codex</a></h3><p>5-hour and weekly limits, reset credits, and spend at API rates. <a href="/codex">Codex tracker</a>.</p></li>
         <li class="is-featured"><h3><img src="/providers/claude.svg" alt="" /><a href="/claude">Claude</a></h3><p>5-hour and weekly limits, saved limit resets, and Claude Code spend. <a href="/claude">Claude tracker</a>.</p></li>
@@ -115,7 +116,7 @@
         <li class="is-featured"><h3><img src="/providers/gemini.svg" alt="" /><a href="/gemini">Gemini</a></h3><p>Quota pinned to one Google account, plus Antigravity spend. <a href="/gemini">Gemini tracker</a>.</p></li>
         <li><h3><img class="preserve-color" src="/providers/meta.svg" alt="" />Meta</h3><p>Muse Code activity from local logs, with plan readings. The Meta AI app has no verified usage source yet.</p></li>
     </ul>
-    <h2 class="group-title">Coding assistants and agents <span class="mono">16 · SETTINGS → PROVIDERS</span></h2>
+    <h2 class="group-title" id="assistants">Coding assistants and agents <span class="mono">16 · SETTINGS → PROVIDERS</span></h2>
     <ul class="ptable">
         <li><h3><img src="/providers/copilot.svg" alt="" />GitHub Copilot</h3><p>Copilot usage, signed in with GitHub’s device flow.</p></li>
         <li><h3><img src="/providers/windsurf.svg" alt="" />Windsurf</h3><p>Usage from your Windsurf web session or its local cache.</p></li>
@@ -134,7 +135,7 @@
         <li><h3><img src="/providers/grok.svg" alt="" />Grok</h3><p>Billing through the grok CLI or your grok.com session.</p></li>
         <li><h3>Antigravity</h3><p>Quota from the local Antigravity app. Experimental.</p></li>
     </ul>
-    <h2 class="group-title">Model APIs, credits, and balances <span class="mono">27 · API KEYS OR SESSIONS</span></h2>
+    <h2 class="group-title" id="apis">Model APIs, credits, and balances <span class="mono">27 · API KEYS OR SESSIONS</span></h2>
     <ul class="ptable">
         <li><h3>OpenAI</h3><p>Organization costs and usage with an Admin API key, kept out of the estimate.</p></li>
         <li><h3>Anthropic</h3><p>Organization billed spend and token usage with an Admin API key.</p></li>
@@ -165,7 +166,7 @@
         <li><h3>T3 Chat</h3><p>Usage from your T3 Chat session.</p></li>
         <li><h3>Abacus AI</h3><p>Compute points and billing from your session.</p></li>
     </ul>
-    <h2 class="group-title">Cloud and local <span class="mono">4 · YOUR INFRASTRUCTURE</span></h2>
+    <h2 class="group-title" id="cloud">Cloud and local <span class="mono">4 · YOUR INFRASTRUCTURE</span></h2>
     <ul class="ptable">
         <li><h3>Vertex AI</h3><p>Quota usage from Cloud Monitoring with your gcloud credentials.</p></li>
         <li><h3>AWS Bedrock</h3><p>Cost Explorer usage and budget tracking with AWS credentials.</p></li>

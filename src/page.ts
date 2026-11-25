@@ -5,19 +5,21 @@ import './pages.css';
 import {
   createIcons, ArrowUpRight, ArrowDown, ArrowRight, Download, Gauge, Timer, Users, Coins, ShieldCheck, History,
   KeyRound, Terminal, FileText, Globe, Ticket, Layers, Receipt, ChartColumn, CircleSlash, Scale, Cpu, Plus, Pin,
-  RefreshCcw, Crown, RotateCw, Settings, Ellipsis, LayoutGrid, Network, Eye,
+  RefreshCcw, Crown, RotateCw, Settings, Ellipsis, LayoutGrid, Network, Eye, Menu, X, Send,
 } from 'lucide';
 import { inject } from '@vercel/analytics';
 import { initAnalytics, isInternalVisit } from './analytics';
 import { initEngagement } from './engagement';
+import { initMobile } from './mobile';
 
 initAnalytics();
 inject({ beforeSend: event => (isInternalVisit() ? null : event) });
 initEngagement();
+initMobile();
 createIcons({ icons: {
   ArrowUpRight, ArrowDown, ArrowRight, Download, Gauge, Timer, Users, Coins, ShieldCheck, History, KeyRound, Terminal,
   FileText, Globe, Ticket, Layers, Receipt, ChartColumn, CircleSlash, Scale, Cpu, Plus, Pin, RefreshCcw, Crown,
-  RotateCw, Settings, Ellipsis, LayoutGrid, Network, Eye,
+  RotateCw, Settings, Ellipsis, LayoutGrid, Network, Eye, Menu, X, Send,
 } });
 
 // The header marks the page you are on.

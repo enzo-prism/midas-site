@@ -30,11 +30,12 @@ Enhanced measurement is enabled for outbound clicks, scrolls, file downloads, an
 | `cta_click` | `cta`, `cta_location` | A link with `data-cta` is clicked. `cta`: download, download_jump, source, release_notes, releases, provider_list, setup_guide, issues, privacy, codexbar, prism. `cta_location`: header, hero, providers, updates, download, footer. |
 | `section_view` | `section` | Once per page view, when a `data-section` block has stayed in the upper half of the viewport for one second in a visible tab, so sections a smooth nav jump scrolls past are not counted: hero, providers, features, menubar, sync, trust, updates, faq, download. Sections seen before opt-in are sent at opt-in. |
 | `faq_open` | `question` | A FAQ answer is expanded. |
+| `send_to_mac` | `cta_location`, `method` | On a phone or other non-Mac, a Send to my Mac button is used. `method`: share (share sheet opened and not dismissed), copy (link copied), manual (both failed; a toast shows the address). Dismissing the share sheet sends nothing. These clicks send no `cta_click` and no `file_download`; the "or download the ZIP here" link under them is a normal download with `cta_location` ending in `_direct`. |
 | `demo_interact` | `control`, `choice` | A visitor uses a demo control: menu_bar (open/close), period, chart_metric, menu_bar_mode, spend_privacy (on/off). The autoplaying recording never sends it. |
 
 New links that matter get `data-cta` and `data-cta-location`; new page sections get `data-section`. To report on the parameters in GA4, register event-scoped custom dimensions for `cta`, `cta_location`, `section`, `control`, `choice` and `question` (Admin → Custom definitions). Until they are registered, the events count but their parameters are not reportable.
 
-Vercel Web Analytics also receives a cookieless `Download` custom event with `location` (hero or download) for every visitor's download click, consent or not (custom events need the team's Pro plan, which it has). Use it for the true click count and GA4 for sources and behavior; GA4 sees only visitors who opt in.
+Vercel Web Analytics also receives a cookieless `Download` custom event with `location` (hero or download) for every visitor's download click, consent or not (custom events need the team's Pro plan, which it has). Phone handoffs send a separate `Send to Mac` event with `location` and `method` instead. Use it for the true click count and GA4 for sources and behavior; GA4 sees only visitors who opt in.
 
 ## Internal traffic
 
