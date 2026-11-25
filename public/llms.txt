@@ -2,7 +2,7 @@
 
 > Midas is a free, open-source macOS menu-bar app that shows AI usage limits, reset times, and estimated AI spend at public API rates for Claude, Codex, Cursor, Gemini, and 50+ other AI providers. It is made by Prism, MIT-licensed, and runs on Apple Silicon Macs with macOS 14 or later.
 
-Key facts (current release: Midas 0.51.0, November 19, 2026):
+Key facts (current release: Midas 0.52.0, November 24, 2026):
 
 - Price: free. No Midas account or subscription. Download from GitHub Releases.
 - Platform: native macOS app for Apple Silicon, macOS 14 Sonoma or later. No Windows or Linux app.
@@ -11,10 +11,11 @@ Key facts (current release: Midas 0.51.0, November 19, 2026):
 - Codex (OpenAI): 5-hour and weekly limits, reset credits ("2 available · 1 usable now"), multiple OpenAI accounts, and Codex spend from local session logs at API rates.
 - Cursor: the shared weekly pool on unified plans (or monthly pools on legacy plans), extra usage on legacy plans, and spend from Cursor's own reported costs (the daily usage feed on unified plans, per-request usage events on legacy plans).
 - Gemini (new in 0.51.0): quota pinned to one Google account, rolling 5-hour and weekly limits when the source reports them, and Antigravity spend at Gemini API rates.
+- Suno and ElevenLabs (0.52.0): Suno monthly credits, downloads, and renewal from the signed-in Suno CLI; ElevenLabs usage from the signed-in ElevenLabs CLI, so no API key is needed.
 - AI Spend is an estimate: recorded tokens priced at public API rates (Cursor usage is valued from Cursor's own reported costs). It is never a bill or a savings claim. Missing data is excluded and marked partial, never counted as $0. Billed API spend from an Anthropic Admin API key is labeled billed and kept separate. Currencies are never converted.
 - Privacy: Midas reads usage directly from each provider. It does not upload prompts or conversation text. Optional sync shares only numeric usage through the user's own private Tailscale hub or iCloud Drive folder.
 - Origin: Midas started as a fork of CodexBar by Peter Steinberger and is now developed and shipped separately by Prism.
-- Supported providers: 52 in Midas 0.51.0. Guided setup covers Codex, Claude, Cursor, Gemini, and Meta.
+- Supported providers: 53 in Midas 0.52.0. Guided setup covers Codex, Claude, Cursor, Gemini, and Meta.
 
 ## Pages
 
@@ -23,12 +24,12 @@ Key facts (current release: Midas 0.51.0, November 19, 2026):
 - [Codex usage tracker](https://midas-ai.dev/codex): Codex limits, reset credits, multiple OpenAI accounts, and spend.
 - [Cursor usage tracker](https://midas-ai.dev/cursor): Cursor's shared weekly pool, legacy pools, extra usage, and spend.
 - [Gemini usage tracker](https://midas-ai.dev/gemini): Gemini quota with account pinning, sources, and spend.
-- [Supported AI providers](https://midas-ai.dev/providers): All 52 providers and what Midas reads for each.
+- [Supported AI providers](https://midas-ai.dev/providers): All 53 providers and what Midas reads for each.
 - [AI spend estimates](https://midas-ai.dev/ai-spend): How Midas prices usage at public API rates, and the rules it follows.
 
 ## Download and source
 
-- [Download Midas 0.51.0 (Apple Silicon ZIP)](https://github.com/enzo-prism/midas/releases/download/v0.51.0-midas.1/Midas-0.51.0-macos-arm64.zip)
+- [Download Midas 0.52.0 (Apple Silicon ZIP)](https://github.com/enzo-prism/midas/releases/download/v0.52.0-midas.1/Midas-0.52.0-macos-arm64.zip)
 - [Source code on GitHub](https://github.com/enzo-prism/midas)
 - [Release notes](https://github.com/enzo-prism/midas/releases)
 - [Setup guide](https://github.com/enzo-prism/midas/blob/main/docs/MIDAS_SETUP.md)

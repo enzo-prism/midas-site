@@ -14,7 +14,7 @@ Changes:
 
 - **Six indexable content pages.**
   - `/claude`, `/codex`, `/cursor` and `/gemini`.
-  - `/providers`: all 52 providers in the source at `v0.51.0-midas.1`.
+  - `/providers`: all 53 providers in the source at `v0.52.0-midas.1`.
   - `/ai-spend`: how estimates are calculated and the rules they follow.
 
   Each page has a unique title and description, a self-referencing canonical, Open Graph and Twitter
@@ -125,7 +125,7 @@ Site-wide, it checks:
 
 - titles and descriptions are unique;
 - every internal link returns 200;
-- the 52-provider list and the counts quoted on the page;
+- the 53-provider list and the counts quoted on the page;
 - the AI-spend sums and wording;
 - `llms.txt` content and content type;
 - robots rules;

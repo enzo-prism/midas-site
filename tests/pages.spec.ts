@@ -4,7 +4,7 @@ import { test, expect, type Page } from '@playwright/test';
 // with BASE_URL=https://midas-ai.dev, against production.
 const origin = 'https://midas-ai.dev';
 const indexable = ['/', '/claude', '/codex', '/cursor', '/gemini', '/providers', '/ai-spend'];
-const download = 'https://github.com/enzo-prism/midas/releases/download/v0.51.0-midas.1/Midas-0.51.0-macos-arm64.zip';
+const download = 'https://github.com/enzo-prism/midas/releases/download/v0.52.0-midas.1/Midas-0.52.0-macos-arm64.zip';
 const canonicalOf = (path: string) => `${origin}${path}`;
 
 type Entity = Record<string, any>;
@@ -133,15 +133,15 @@ test('provider pages are reachable from the homepage and from each other', async
   await expect(page.locator('.header nav a[aria-current="page"]')).toHaveText('Claude');
 });
 
-test('the providers page lists all 52 providers once, and its counts agree', async ({ page }) => {
+test('the providers page lists all 53 providers once, and its counts agree', async ({ page }) => {
   await page.goto('/providers');
   const names = (await page.locator('.ptable h3').allTextContents()).map(name => name.trim());
-  expect(names).toHaveLength(52);
-  expect(new Set(names).size).toBe(52);
+  expect(names).toHaveLength(53);
+  expect(new Set(names).size).toBe(53);
   for (const name of ['Codex', 'Claude', 'Cursor', 'Gemini', 'Meta', 'OpenRouter', 'GitHub Copilot', 'DGX Spark']) expect(names).toContain(name);
-  await expect(page.locator('.lede')).toContainText('tracks 52 AI services');
+  await expect(page.locator('.lede')).toContainText('tracks 53 AI services');
   const faq = page.locator('.faq-items details').filter({ hasText: 'How many AI providers' });
-  await expect(faq).toContainText('supports 52 providers');
+  await expect(faq).toContainText('supports 53 providers');
   await expect(page.locator('.ptable a[href="/claude"]').first()).toBeVisible();
 });
 
@@ -165,7 +165,7 @@ test('llms.txt summarizes the product and links every page', async ({ request })
   const text = await response.text();
   expect(text.startsWith('# Midas\n')).toBe(true);
   expect(text).toMatch(/^> Midas is a free, open-source macOS menu-bar app/m);
-  expect(text).toContain('Midas 0.51.0');
+  expect(text).toContain('Midas 0.52.0');
   expect(text).toContain(download);
   for (const path of indexable) expect(text).toContain(`](${canonicalOf(path)})`);
   expect(text).toContain('never a bill');
