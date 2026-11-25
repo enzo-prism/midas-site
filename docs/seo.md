@@ -14,7 +14,7 @@ Changes:
 
 - **Six indexable content pages.**
   - `/claude`, `/codex`, `/cursor` and `/gemini`.
-  - `/providers`: all 53 providers in the source at `v0.52.0-midas.1`.
+  - `/providers`: all 53 providers in the source at `v0.52.1-midas.1`.
   - `/ai-spend`: how estimates are calculated and the rules they follow.
 
   Each page has a unique title and description, a self-referencing canonical, Open Graph and Twitter

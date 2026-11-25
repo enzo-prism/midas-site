@@ -4,7 +4,7 @@ import { test, expect, type Page } from '@playwright/test';
 // with BASE_URL=https://midas-ai.dev, against production.
 const origin = 'https://midas-ai.dev';
 const indexable = ['/', '/claude', '/codex', '/cursor', '/gemini', '/providers', '/ai-spend'];
-const download = 'https://github.com/enzo-prism/midas/releases/download/v0.52.0-midas.1/Midas-0.52.0-macos-arm64.zip';
+const download = 'https://github.com/enzo-prism/midas/releases/download/v0.52.1-midas.1/Midas-0.52.1-macos-arm64.zip';
 const canonicalOf = (path: string) => `${origin}${path}`;
 
 type Entity = Record<string, any>;
@@ -165,7 +165,7 @@ test('llms.txt summarizes the product and links every page', async ({ request })
   const text = await response.text();
   expect(text.startsWith('# Midas\n')).toBe(true);
   expect(text).toMatch(/^> Midas is a free, open-source macOS menu-bar app/m);
-  expect(text).toContain('Midas 0.52.0');
+  expect(text).toContain('Midas 0.52.1');
   expect(text).toContain(download);
   for (const path of indexable) expect(text).toContain(`](${canonicalOf(path)})`);
   expect(text).toContain('never a bill');
