@@ -2,6 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://midas-ai.dev/</loc>
-    <lastmod>2026-11-19</lastmod>
+    <lastmod>2026-11-24</lastmod>
+  </url>
+  <url>
+    <loc>https://midas-ai.dev/claude</loc>
+    <lastmod>2026-11-24</lastmod>
+  </url>
+  <url>
+    <loc>https://midas-ai.dev/codex</loc>
+    <lastmod>2026-11-24</lastmod>
+  </url>
+  <url>
+    <loc>https://midas-ai.dev/cursor</loc>
+    <lastmod>2026-11-24</lastmod>
+  </url>
+  <url>
+    <loc>https://midas-ai.dev/gemini</loc>
+    <lastmod>2026-11-24</lastmod>
+  </url>
+  <url>
+    <loc>https://midas-ai.dev/providers</loc>
+    <lastmod>2026-11-24</lastmod>
+  </url>
+  <url>
+    <loc>https://midas-ai.dev/ai-spend</loc>
+    <lastmod>2026-11-24</lastmod>
   </url>
 </urlset>

@@ -1,3 +1,25 @@
+# Midas (midas-ai.dev): public marketing pages for a free, open-source Mac app.
+# Search engines and AI assistants are welcome to crawl, cite, and summarize them.
+# A plain-text summary for language models lives at https://midas-ai.dev/llms.txt
+
 User-agent: *
 Allow: /
+
+# Named for clarity: these search and answer-engine crawlers are explicitly allowed.
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Applebot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: GPTBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: DuckAssistBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Allow: /
+
 Sitemap: https://midas-ai.dev/sitemap.xml

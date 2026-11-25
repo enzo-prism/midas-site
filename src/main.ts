@@ -1,8 +1,8 @@
 import './style.css';
 import {
   createIcons, Crown, RotateCw, Settings, Ellipsis, ChevronDown, Ticket, RefreshCcw, ChartColumn, Wifi, BatteryFull,
-  ArrowUpRight, ArrowDown, Download, KeyRound, MessageSquareOff, Package, Plus, EyeOff, Network, UserX, Hash, History,
-  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles,
+  ArrowUpRight, ArrowRight, ArrowDown, Download, KeyRound, MessageSquareOff, Package, Plus, EyeOff, Network, UserX, Hash, History,
+  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles, Coins,
 } from 'lucide';
 import { inject } from '@vercel/analytics';
 import { mountAsciiCrown } from './ascii-crown';
@@ -14,8 +14,8 @@ inject({ beforeSend: event => (isInternalVisit() ? null : event) });
 initEngagement();
 createIcons({ icons: {
   Crown, RotateCw, Settings, Ellipsis, ChevronDown, Ticket, RefreshCcw, ChartColumn, Wifi, BatteryFull,
-  ArrowUpRight, ArrowDown, Download, KeyRound, MessageSquareOff, Package, Plus, EyeOff, Network, UserX, Hash, History,
-  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles,
+  ArrowUpRight, ArrowRight, ArrowDown, Download, KeyRound, MessageSquareOff, Package, Plus, EyeOff, Network, UserX, Hash, History,
+  Server, Laptop, Monitor, FileArchive, FolderOpen, Sparkles, Coins,
 } });
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');

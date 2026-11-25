@@ -88,7 +88,7 @@ test('opted-in visits record CTA placement, sections, FAQ opens and demo use; Ve
   await page.locator('.header nav a[href="#faq"]').click();
   await expect.poll(() => gaEvents(page)).toContainEqual(['section_view', { section: 'faq' }]);
   await page.locator('.faq-items summary').first().click();
-  await expect.poll(() => gaEvents(page)).toContainEqual(['faq_open', { question: 'Is AI Spend my bill?' }]);
+  await expect.poll(() => gaEvents(page)).toContainEqual(['faq_open', { question: 'What is Midas?' }]);
   const recorded = await gaEvents(page);
   expect(recorded).not.toContainEqual(['section_view', { section: 'sync' }]);
   expect(recorded).not.toContainEqual(['section_view', { section: 'trust' }]);

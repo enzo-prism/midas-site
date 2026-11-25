@@ -35,8 +35,9 @@ test('hero panel provider spends always sum to the illustrative total in both pe
     expect(parts.reduce((sum, part) => sum + money(part), 0)).toBeCloseTo(money(total), 2);
   }
   await expect(page.locator('.demo-disclaimer')).toContainText(/illustrative/i);
-  await expect(page.locator('[data-row="codex"] .banked')).toHaveText('0 usable now');
-  await expect(page.locator('[data-row="codex"] .banked')).toHaveAttribute('title', /1 unused credit; 0 apply/);
+  // Since 0.49.5 Codex headlines the credits held; "usable now" is added only when some apply.
+  await expect(page.locator('[data-row="codex"] .banked')).toHaveText('1 available');
+  await expect(page.locator('[data-row="codex"] .banked')).toHaveAttribute('title', /1 reset credit held; none apply/);
   // Meta reports no limit, so the demo never invents a percentage for it.
   await expect(page.locator('[data-row="meta"] .pbar')).toHaveCount(0);
   await expect(page.locator('[data-row="meta"]')).toContainText('no reported limit');
@@ -260,7 +261,7 @@ test('canonical domain, Search Console tag, and sync claims', async ({ page }) =
 
 test('search metadata describes the app consistently without billing claims', async ({ page }) => {
   const title = 'Midas — AI Usage Tracker for Mac | Claude, Codex & Cursor';
-  const description = 'Track Claude, Codex, and Cursor usage, quotas, resets, and estimated AI spend in your Mac menu bar. Free, open source, with optional private sync.';
+  const description = 'Track Claude, Codex, Cursor, and Gemini usage limits, resets, and estimated AI spend in your Mac menu bar. Free, open source, with optional private sync.';
   await expect(page).toHaveTitle(title);
   await expect(page.locator('title')).toHaveCount(1);
   await expect(page.locator('meta[name="description"]')).toHaveCount(1);
@@ -279,7 +280,7 @@ test('search metadata describes the app consistently without billing claims', as
 });
 
 test('structured app data matches the visible free signed Mac download', async ({ page }) => {
-  const data = JSON.parse(await page.locator('script[type="application/ld+json"]').innerText());
+  const data = JSON.parse(await page.locator('#site-schema').innerText());
   expect(data['@context']).toBe('https://schema.org');
   const app = data['@graph'].find((item: Record<string, unknown>) => item['@type'] === 'SoftwareApplication');
   expect(app.name).toBe('Midas');
@@ -292,24 +293,23 @@ test('structured app data matches the visible free signed Mac download', async (
   expect(app.review).toBeUndefined();
   const webpage = data['@graph'].find((item: Record<string, unknown>) => item['@type'] === 'WebPage');
   expect(webpage.mainEntity['@id']).toBe(app['@id']);
-  const faq = page.locator('#faq details').filter({ hasText: 'Can I rename my accounts?' });
+  const faq = page.locator('#faq details').filter({ hasText: 'Can I track several accounts?' });
   await faq.locator('summary').click();
   await expect(faq).toContainText('Account labels');
   await expect(faq).toContainText('on this Mac');
 });
 
-test('robots and sitemap expose only the canonical page', async ({ request, page }) => {
+test('robots and sitemap reference the canonical homepage', async ({ request, page }) => {
   const robots = await request.get('/robots.txt');
   expect(robots.ok()).toBeTruthy();
   expect(await robots.text()).toContain('Sitemap: https://midas-ai.dev/sitemap.xml');
   const sitemap = await request.get('/sitemap.xml');
   expect(sitemap.ok()).toBeTruthy();
   const xml = await sitemap.text();
-  expect(xml.match(/<loc>/g)).toHaveLength(1);
   expect(xml).toContain('<loc>https://midas-ai.dev/</loc>');
   // The sitemap's lastmod and the WebPage dateModified describe the same content change.
   await page.goto('/');
-  const graph = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent() ?? '{}')['@graph'] ?? [];
+  const graph = JSON.parse(await page.locator('#site-schema').textContent() ?? '{}')['@graph'] ?? [];
   const modified = graph.find((entity: { '@type'?: string }) => entity['@type'] === 'WebPage')?.dateModified;
   expect(modified).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   expect(xml).toContain(`<lastmod>${modified}</lastmod>`);
